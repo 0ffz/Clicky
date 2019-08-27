@@ -1,0 +1,5 @@
+.idea
+migrations
+secret.txt
+*.sqlite3*
+venv-CPU
