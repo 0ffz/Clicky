@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class ClickerConfig(AppConfig):
+class ClickyConfig(AppConfig):
     name = 'Clicky'

@@ -1,7 +1,7 @@
 {% if latest_room_list %}
     <ul>
     {% for room in latest_room_list %}
-        <li><a href="{% url 'Clicky:detail' room.id %}">{{ room.room_text }}</a></li>
+        <li><a href="{% url 'clicky:detail' room.id %}">{{ room.room_text }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
