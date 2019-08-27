@@ -1,9 +1,84 @@
-<h1>{{ room.room_text }}</h1>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'skeleton.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<div class="container">
+    <h1>{{ room.room_text }}</h1>
+    <p id="refresh"></p>
 
-<ul>
-{% for choice in room.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
-{% endfor %}
-</ul>
+    <div class="chart-container" style="position: relative; height:70vh; width:100%">
+        <canvas id="myChart"></canvas>
+    </div>
 
-<a href="{% url 'clicky:reset' room.id %}">Reset</a>
+    <a class="button" href="{% url 'clicky:reset' room.id room.slug %}">Reset</a>
+</div>
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var data = {
+        labels: [
+            {% for choice in room.choice_set.all %}{{ choice.choice_text }}, {% endfor %}
+        ],
+        datasets: [{
+            label: '# of Votes',
+            data: [],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            legend: {display: false},
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value, index, values) {
+                            if (Math.floor(value) === value) {
+                                return value;
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    });
+
+
+    $(document).ready(function () {
+        refresh()
+    });
+
+    function refresh() {
+        $.ajax({
+            url: '{% url 'clicky:results_data' room.id room.slug %}',
+            success: function (returned) {
+                chart.data.datasets[0].data = returned.toString().substring(0, returned.toString().length - 1).split(',');
+                chart.update();
+            }
+        });
+        setTimeout(function () {
+            refresh()
+        }, 5000);
+    }
+</script>
