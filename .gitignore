@@ -1,4 +1,6 @@
 .idea
 secret.txt
+recaptcha.txt
 *.sqlite3*
 venv-CPU
+__pycache__

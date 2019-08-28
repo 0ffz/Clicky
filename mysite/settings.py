@@ -132,5 +132,13 @@ STATIC_URL = '/static/'
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+def get_captcha_key():
+    try:
+        return open(os.path.join(BASE_DIR, 'recaptcha.txt')).read().strip()
+    except IOError:
+        return ''
+
+
 RECAPTCHA_PUBLIC_KEY = '6LdheLUUAAAAAJakcQ-tjjMRxo_6Y88l9kQzU1Fo'
-RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', get_captcha_key())

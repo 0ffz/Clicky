@@ -21,13 +21,16 @@ $choice10: #e74c3c;
 
     + label {
       color: #333;
-      font-size: 20px;
+      font-size: 25px;
+      font-weight: 600;
       text-align: center;
 
       span {
         display: inline-block;
-        width: 40px;
-        height: 40px;
+        width: 6vw;
+        height: 6vw;
+        max-width: 70px;
+        max-height: 70px;
         margin: -1px 4px 0 0;
         vertical-align: middle;
         cursor: pointer;
@@ -40,14 +43,39 @@ $choice10: #e74c3c;
         line-height: 44px;
 
         img {
+          height: 100%;
+          width: 50%;
+          vertical-align: center;
           opacity: 0;
-          transition: all .3s ease;
         }
       }
     }
 
     &:checked + label span img {
       opacity: 1;
+      transition: all .3s ease;
+    }
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .custom-radios input[type="radio"] {
+    + label {
+      transition: all 0.3s ease;
+      text-shadow: 1px 1px black;
+      color: white;
+      border-radius: 5px;
+      border: 2px solid #FFFFFF;
+      height: 40px;
+
+      span {
+        display: none;
+      }
+    }
+
+    &:checked + label {
+      text-shadow: none;
+      opacity: 0.5;
     }
   }
 }
@@ -90,4 +118,47 @@ $choice10: #e74c3c;
 
 #choice10 + label span {
   background-color: $choice10;
+}
+
+@media screen and (max-width: 550px) {
+
+  #choice1 + label {
+    background-color: $choice1;
+  }
+
+  #choice2 + label {
+    background-color: $choice2;
+  }
+
+  #choice3 + label {
+    background-color: $choice3;
+  }
+
+  #choice4 + label {
+    background-color: $choice4;
+  }
+
+  #choice5 + label {
+    background-color: $choice5;
+  }
+
+  #choice6 + label {
+    background-color: $choice6;
+  }
+
+  #choice7 + label {
+    background-color: $choice7;
+  }
+
+  #choice8 + label {
+    background-color: $choice8;
+  }
+
+  #choice9 + label {
+    background-color: $choice9;
+  }
+
+  #choice10 + label {
+    background-color: $choice10;
+  }
 }

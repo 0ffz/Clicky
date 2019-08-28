@@ -5,7 +5,15 @@
 
     <form action="." method="post">
         {% csrf_token %}
-        {{ form }}
+        <div class="fieldWrapper">
+            {{ form.room_text.label_tag }}
+            {{ form.room_text }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.num_choices.label_tag }}
+            {{ form.num_choices }}
+        </div>
         <input class="button-primary" type="submit" value="Create">
+        {{ form.captcha }}
     </form>
 {% endblock %}

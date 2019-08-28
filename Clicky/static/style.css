@@ -20,14 +20,20 @@
     cursor: pointer;
 }
 
+.fieldWrapper {
+    margin-bottom: 10px;
+}
+
 .home i {
-    font-size: 30px;
+    font-size: 40px;
 }
 
 html {
-    padding-top: 10vw;
+    padding-top: 30px;
 }
-
+h1{
+    font-weight: 300;
+}
 /* Larger than mobile */
 @media screen and (min-width: 550px) {
     html, body {
@@ -46,5 +52,14 @@ html {
     .home i {
         margin-top: 5px;
         font-size: 50px;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    input {
+        width: 100%;
+    }
+    .button {
+        width: 100%;
     }
 }
