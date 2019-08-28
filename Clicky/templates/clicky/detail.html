@@ -3,16 +3,22 @@
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'radio.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'animate.min.css' %}">
 {% endblock %}
 
 {% block content %}
     <h1><a class="home" href={% url 'clicky:index' %}><i class="fas fa-home"></i></a> {{ room.room_text }}</h1>
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <div class="animated fadeInUp"><p class="animated fadeOutUp delay-2s">
+        <strong>
+            {% if error_message %}{{ error_message }}
+            {% else %} Pick a choice from the list
+            {% endif %}
+        </strong></p></div>
 
     <form action="{% url 'clicky:vote' room.id room.slug %}" method="post">
         {% csrf_token %}
         <div class="row custom-radios">
-            {% for choice in room.choice_set.all %}
+            {% for choice in room.choice_set.iterator %}
                 <div class="one column">
                     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
                     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}

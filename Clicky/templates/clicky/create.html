@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1><a class="home" href={% url 'clicky:index' %}><i class="fas fa-home"></i></a> Create new room</h1>
-
+    <p>Pick a title and a number of options. A temporary voting room will be created with a code to join on screen.</p>
     <form action="." method="post">
         {% csrf_token %}
         <div class="fieldWrapper">
