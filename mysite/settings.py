@@ -21,15 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-# Generating security from https://gist.github.com/ndarville/3452907
-try:
-    SECRET_KEY
-except NameError:
-    SECRET_FILE = os.path.join(BASE_DIR, 'secret.txt')
-    try:
-        SECRET_KEY = open(SECRET_FILE).read().strip()
-    except IOError:
-        SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '13z7v(*kq+ar=1(+xh*$a76ou#np_bf709t*1zxw^icir^cr-p')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
