@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '13z7v(*kq+ar=1(+xh*$a76ou#np_b
 # DEBUG = True
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['clickychoice.herokuapp.com','127.0.0.1']
 
 
 # Application definition
