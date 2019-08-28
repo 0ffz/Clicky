@@ -1,3 +1,5 @@
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Invisible
 from django import forms
 from django.http import Http404
 
@@ -5,6 +7,7 @@ from django.http import Http404
 class ClickyCreateForm(forms.Form):
     room_text = forms.CharField(label='Room Name', max_length=20)
     num_choices = forms.IntegerField(label='Choices', min_value=2, max_value=10)
+    captcha = ReCaptchaField(widget=ReCaptchaV2Invisible)
 
 
 class ClickyJoinForm(forms.Form):
