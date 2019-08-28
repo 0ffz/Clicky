@@ -1,12 +1,11 @@
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'skeleton.css' %}">
+{% extends 'clicky/base.html' %}
 
-<div class="container">
+{% block content %}
     <h1>Create a new room</h1>
 
     <form action="." method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Create">
+        <input class="button-primary" type="submit" value="Create">
     </form>
-</div>
+{% endblock %}

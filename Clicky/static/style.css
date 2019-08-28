@@ -1,0 +1,9 @@
+.errorlist{
+    color: orangered;
+    list-style: none;
+}
+
+.code-text{
+    color: #777777;
+    font-weight: bold;
+}

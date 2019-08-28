@@ -1,14 +1,25 @@
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'skeleton.css' %}">
+{% extends 'clicky/base.html' %}
 
-<div class="container">
-    {% if latest_room_list %}
-        <ul>
-            {% for room in latest_room_list %}
-                <li><a href="{% url 'clicky:detail' room.id room.slug %}">{{ room.room_text }}</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No polls are available.</p>
-    {% endif %}
-</div>
+{% block content %}
+    <h1>Join a room</h1>
+    <form action="." method="post">
+        {% csrf_token %}
+        <div class="fieldWrapper">
+            {{ form.room_name.label_tag }}
+            {{ form.room_name }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.room_code.label_tag }}
+            {{ form.room_code }}
+        </div>
+        {% if form.room_code.errors %}
+            <div class="animated fadeInUp">
+                {{ form.room_code.errors }}
+            </div>
+        {% endif %}
+        <input class="button-primary" type="submit" value="Join">
+
+    </form>
+
+    <a class="button" href="{% url 'clicky:create' %}">Create new room</a>
+{% endblock %}

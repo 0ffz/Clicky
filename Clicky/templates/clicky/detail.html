@@ -1,6 +1,5 @@
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'skeleton.css' %}">
-<div class="container">
+{% extends 'clicky/base.html' %}
+{% block content %}
     <h1>{{ room.room_text }}</h1>
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -13,4 +12,4 @@
         {% endfor %}
         <input class="button-primary" type="submit" value="Vote">
     </form>
-</div>
+{% endblock %}

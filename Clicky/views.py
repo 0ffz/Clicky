@@ -1,10 +1,11 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 
-from .forms import ClickyCreateForm
+from .forms import ClickyCreateForm, ClickyJoinForm
 from .models import Choice, Room
 
 
@@ -15,13 +16,18 @@ def validate_or_404(room_id, slug):
     raise Http404
 
 
-class IndexView(generic.ListView):
+class IndexView(generic.FormView, generic.TemplateView):
     template_name = 'clicky/index.html'
+    form_class = ClickyJoinForm
     context_object_name = 'latest_room_list'
 
-    def get_queryset(self):
-        """Return the last five published rooms."""
-        return Room.objects.order_by('-pub_date')[:5]
+    def form_valid(self, form):
+        room_name = form.cleaned_data['room_name']
+        room_code = form.cleaned_data['room_code']
+        # try:
+
+        return HttpResponseRedirect(reverse('clicky:detail', args=(room_code, room_name)))
+        # except Http404:
 
 
 class DetailView(generic.DetailView):
@@ -114,5 +120,5 @@ def reset(request, room_id, slug):
         for choice in room.choice_set.iterator():
             choice.votes = 0
             choice.save()
-        return HttpResponseRedirect(reverse('clicky:results', args=(room.id,)))
+        return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug,)))
     return HttpResponseForbidden()
