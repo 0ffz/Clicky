@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '13z7v(*kq+ar=1(+xh*$a76ou#np_bf709t*1zxw^icir^cr-p')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
+# DEBUG = False
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['clickychoice.herokuapp.com', '127.0.0.1']
@@ -131,19 +131,15 @@ RECAPTCHA_PUBLIC_KEY = '6LdheLUUAAAAAJakcQ-tjjMRxo_6Y88l9kQzU1Fo'
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', get_captcha_key())
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-# The absolute path to the directory where collectstatic will collect static files for deployment.
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# The URL to use when referring to static files (where they will be served from)
 STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
