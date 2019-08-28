@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 from django.views import generic
 
 from .forms import ClickyCreateForm, ClickyJoinForm
@@ -11,7 +12,7 @@ from .models import Choice, Room
 
 def validate_or_404(room_id, slug):
     room = get_object_or_404(Room, pk=room_id)
-    if room.slug() == slug:
+    if room.slug() == slugify(slug):
         return room
     raise Http404
 
@@ -24,10 +25,8 @@ class IndexView(generic.FormView, generic.TemplateView):
     def form_valid(self, form):
         room_name = form.cleaned_data['room_name']
         room_code = form.cleaned_data['room_code']
-        # try:
 
-        return HttpResponseRedirect(reverse('clicky:detail', args=(room_code, room_name)))
-        # except Http404:
+        return HttpResponseRedirect(reverse('clicky:detail', args=(room_code, slugify(room_name))))
 
 
 class DetailView(generic.DetailView):

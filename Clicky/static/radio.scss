@@ -1,0 +1,93 @@
+// Colors
+$choice1: #FF6384;
+$choice2: #36A2EB;
+$choice3: #FFCE56;
+$choice4: #4BC0C0;
+$choice5: #9966FF;
+$choice6: #FF9F40;
+$choice7: #2ecc71;
+$choice8: #3498db;
+$choice9: #f1c40f;
+$choice10: #e74c3c;
+
+.custom-radios {
+
+  div {
+    display: inline-block;
+  }
+
+  input[type="radio"] {
+    display: none;
+
+    + label {
+      color: #333;
+      font-size: 20px;
+      text-align: center;
+
+      span {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        margin: -1px 4px 0 0;
+        vertical-align: middle;
+        cursor: pointer;
+        border-radius: 50%;
+        border: 2px solid #FFFFFF;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+        background-repeat: no-repeat;
+        background-position: center;
+        text-align: center;
+        line-height: 44px;
+
+        img {
+          opacity: 0;
+          transition: all .3s ease;
+        }
+      }
+    }
+
+    &:checked + label span img {
+      opacity: 1;
+    }
+  }
+}
+
+#choice1 + label span {
+  background-color: $choice1;
+}
+
+#choice2 + label span {
+  background-color: $choice2;
+}
+
+#choice3 + label span {
+  background-color: $choice3;
+}
+
+#choice4 + label span {
+  background-color: $choice4;
+}
+
+#choice5 + label span {
+  background-color: $choice5;
+}
+
+#choice6 + label span {
+  background-color: $choice6;
+}
+
+#choice7 + label span {
+  background-color: $choice7;
+}
+
+#choice8 + label span {
+  background-color: $choice8;
+}
+
+#choice9 + label span {
+  background-color: $choice9;
+}
+
+#choice10 + label span {
+  background-color: $choice10;
+}
