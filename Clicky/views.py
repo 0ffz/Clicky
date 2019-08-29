@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404
+from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
@@ -106,7 +106,14 @@ def results(request, room_id, slug):
 def results_data(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if get_room_admin(room_id) in request.session:
-        return render(request, 'clicky/results_data.html', {'room': room})
+        room = Room.objects.get(pk=room_id)
+        votes = []
+        for choice in room.choice_set.order_by("id").iterator():
+            votes += str(choice.votes)
+        data = {
+            'votes': votes
+        }
+        return JsonResponse(data)
     return HttpResponseForbidden()
 
 

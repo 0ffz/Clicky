@@ -83,7 +83,7 @@
             $.ajax({
                 url: '{% url 'clicky:results_data' room.id room.slug %}',
                 success: function (returned) {
-                    chart.data.datasets[0].data = returned.toString().substring(0, returned.toString().length - 1).split(',');
+                    chart.data.datasets[0].data = returned['votes'];
                     chart.update();
                 }
             });
