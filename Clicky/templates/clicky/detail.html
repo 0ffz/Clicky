@@ -1,5 +1,6 @@
 {% extends 'clicky/base.html' %}
 {% load static %}
+{% load clickytags %}
 
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'radio.css' %}">
@@ -18,7 +19,7 @@
     <form action="{% url 'clicky:vote' room.id room.slug %}" method="post">
         {% csrf_token %}
         <div class="row custom-radios">
-            {% for choice in room.choice_set.iterator %}
+            {% for choice in room.choice_set.all|sort_by:'id' %}
                 <div class="one column">
                     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
                     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}
