@@ -45,7 +45,6 @@ $choice10: #e74c3c;
         @media screen and (max-width: 550px) {
           width: 50px !important;
           height: 50px !important;
-          margin-top: 10px;
         }
 
         img {
@@ -65,11 +64,14 @@ $choice10: #e74c3c;
 }
 
 @media screen and (max-width: 550px) {
-  .custom-radios {
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 60px 60px;
+  #vote {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-width: 5px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 0;
+    height: 50px;
   }
 }
 
