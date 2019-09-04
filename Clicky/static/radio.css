@@ -23,6 +23,11 @@
       background-position: center;
       text-align: center;
       line-height: 44px; }
+      @media screen and (max-width: 550px) {
+        .custom-radios input[type="radio"] + label span {
+          width: 50px !important;
+          height: 50px !important;
+          margin-top: 10px; } }
       .custom-radios input[type="radio"] + label span img {
         height: 100%;
         width: 50%;
@@ -33,18 +38,29 @@
     transition: all .3s ease; }
 
 @media screen and (max-width: 550px) {
-  .custom-radios input[type="radio"] + label {
+  .custom-radios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 60px 60px; } }
+/*.custom-radios input[type="radio"] {
+  + label {
     transition: all 0.3s ease;
     text-shadow: 1px 1px black;
     color: white;
     border-radius: 5px;
     border: 2px solid #FFFFFF;
-    height: 40px; }
-    .custom-radios input[type="radio"] + label span {
-      display: none; }
-  .custom-radios input[type="radio"]:checked + label {
+    height: 40px;
+
+    span {
+      display: none;
+    }
+  }
+
+  &:checked + label {
     text-shadow: none;
-    opacity: 0.5; } }
+    opacity: 0.5;
+  }
+}*/
 #choice1 + label span {
   background-color: #FF6384; }
 
@@ -76,34 +92,44 @@
   background-color: #e74c3c; }
 
 @media screen and (max-width: 550px) {
-  #choice1 + label {
-    background-color: #FF6384; }
+  /*#choice1 + label {
+    background-color: $choice1;
+  }
 
   #choice2 + label {
-    background-color: #36A2EB; }
+    background-color: $choice2;
+  }
 
   #choice3 + label {
-    background-color: #FFCE56; }
+    background-color: $choice3;
+  }
 
   #choice4 + label {
-    background-color: #4BC0C0; }
+    background-color: $choice4;
+  }
 
   #choice5 + label {
-    background-color: #9966FF; }
+    background-color: $choice5;
+  }
 
   #choice6 + label {
-    background-color: #FF9F40; }
+    background-color: $choice6;
+  }
 
   #choice7 + label {
-    background-color: #2ecc71; }
+    background-color: $choice7;
+  }
 
   #choice8 + label {
-    background-color: #3498db; }
+    background-color: $choice8;
+  }
 
   #choice9 + label {
-    background-color: #f1c40f; }
+    background-color: $choice9;
+  }
 
   #choice10 + label {
-    background-color: #e74c3c; } }
+    background-color: $choice10;
+  }*/ }
 
 /*# sourceMappingURL=radio.css.map */

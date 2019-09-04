@@ -10,7 +10,7 @@ from .models import Choice, Room
 
 
 def validate_or_404(room_id, slug):
-    room = get_object_or_404(Room, pk=room_id)
+    room = get_object_or_404(Room, id=str(room_id).upper())
     if room.slug() == slugify(slug):
         return room
     raise Http404
@@ -23,7 +23,7 @@ class IndexView(generic.FormView, generic.TemplateView):
 
     def form_valid(self, form):
         room_name = form.cleaned_data['room_name']
-        room_code = form.cleaned_data['room_code']
+        room_code = form.cleaned_data['room_code'].upper()
 
         return HttpResponseRedirect(reverse('clicky:detail', args=(room_code, slugify(room_name))))
 
@@ -35,8 +35,11 @@ class DetailView(generic.DetailView):
     error_message = None
 
     def get(self, request, *args, **kwargs):
-        validate_or_404(self.kwargs['pk'], self.kwargs['slug'])
+
         return super(DetailView, self).get(request, *args, **kwargs)
+
+    def get_object(self):
+        return validate_or_404(self.kwargs['room_id'], self.kwargs['slug'])
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)

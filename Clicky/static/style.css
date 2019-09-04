@@ -31,9 +31,11 @@
 html {
     padding-top: 30px;
 }
-h1{
+
+h1 {
     font-weight: 300;
 }
+
 /* Larger than mobile */
 @media screen and (min-width: 550px) {
     html, body {
@@ -55,10 +57,15 @@ h1{
     }
 }
 
+#room-code input {
+    text-transform: uppercase;
+}
+
 @media screen and (max-width: 550px) {
     input {
         width: 100%;
     }
+
     .button {
         width: 100%;
     }

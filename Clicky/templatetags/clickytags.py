@@ -1,7 +1,5 @@
 from django import template
 
-from Clicky.models import Room
-
 register = template.Library()
 
 

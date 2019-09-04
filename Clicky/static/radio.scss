@@ -42,6 +42,12 @@ $choice10: #e74c3c;
         text-align: center;
         line-height: 44px;
 
+        @media screen and (max-width: 550px) {
+          width: 50px !important;
+          height: 50px !important;
+          margin-top: 10px;
+        }
+
         img {
           height: 100%;
           width: 50%;
@@ -59,26 +65,33 @@ $choice10: #e74c3c;
 }
 
 @media screen and (max-width: 550px) {
-  .custom-radios input[type="radio"] {
-    + label {
-      transition: all 0.3s ease;
-      text-shadow: 1px 1px black;
-      color: white;
-      border-radius: 5px;
-      border: 2px solid #FFFFFF;
-      height: 40px;
+  .custom-radios {
 
-      span {
-        display: none;
-      }
-    }
-
-    &:checked + label {
-      text-shadow: none;
-      opacity: 0.5;
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 60px 60px;
   }
 }
+
+/*.custom-radios input[type="radio"] {
+  + label {
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px black;
+    color: white;
+    border-radius: 5px;
+    border: 2px solid #FFFFFF;
+    height: 40px;
+
+    span {
+      display: none;
+    }
+  }
+
+  &:checked + label {
+    text-shadow: none;
+    opacity: 0.5;
+  }
+}*/
 
 #choice1 + label span {
   background-color: $choice1;
@@ -122,7 +135,7 @@ $choice10: #e74c3c;
 
 @media screen and (max-width: 550px) {
 
-  #choice1 + label {
+  /*#choice1 + label {
     background-color: $choice1;
   }
 
@@ -160,5 +173,5 @@ $choice10: #e74c3c;
 
   #choice10 + label {
     background-color: $choice10;
-  }
+  }*/
 }
