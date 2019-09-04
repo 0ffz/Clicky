@@ -1,7 +1,7 @@
 {% extends 'clicky/base.html' %}
 {% load static %}
 {% load clickytags %}
-
+{% block title %}Clicky - {{room.room_text}}{% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'radio.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'animate.min.css' %}">
