@@ -74,6 +74,16 @@ $choice10: #e74c3c;
     height: 60px;
     font-size: 18px;
   }
+  #results {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border-radius: 10px;
+    margin-bottom: 65px;
+    padding-top: 10px;
+    height: 60px;
+    font-size: 18px;
+  }
 }
 
 /*.custom-radios input[type="radio"] {

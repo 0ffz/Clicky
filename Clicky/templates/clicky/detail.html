@@ -1,7 +1,7 @@
 {% extends 'clicky/base.html' %}
 {% load static %}
 {% load clickytags %}
-{% block title %}Clicky - {{room.room_text}}{% endblock %}
+{% block title %}Clicky - {{ room.room_text }}{% endblock %}
 {% block head %}
     <link rel="stylesheet" type="text/css" href="{% static 'radio.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'animate.min.css' %}">
@@ -33,5 +33,9 @@
         </div>
         <br><br>
         <input id="vote" class="button-primary" type="submit" value="Vote">
+        {% if request.session|is_room_admin:room.id %}
+            <a id="results" class="button button-secondary" href="{% url 'clicky:results' room.id room.slug %}">View
+                Results</a>
+        {% endif %}
     </form>
 {% endblock %}
