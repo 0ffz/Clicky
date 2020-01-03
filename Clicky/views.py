@@ -35,7 +35,6 @@ class DetailView(generic.DetailView):
     error_message = None
 
     def get(self, request, *args, **kwargs):
-
         return super(DetailView, self).get(request, *args, **kwargs)
 
     def get_object(self):
@@ -57,7 +56,9 @@ def create(request):
         if form.is_valid():
             room_text = form.cleaned_data['room_text']
             num_choices = form.cleaned_data['num_choices']
-            room = Room(room_text=room_text, pub_date=timezone.now())
+            can_see_results = form.cleaned_data['can_see_results']
+            room = Room(room_text=room_text, pub_date=timezone.now(), can_see_results=can_see_results)
+            # room = Room(room_text=room_text, pub_date=timezone.now())
             room.save()
 
             for x in range(num_choices):
@@ -73,34 +74,32 @@ def create(request):
 
 def vote(request, room_id, slug):
     room = validate_or_404(room_id, slug)
-    try:
-        selected_choice = room.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the room voting form.
+    if request.method == 'POST':
+        error_message = ""
+        try:
+            selected_choice = room.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            error_message = "You didn't select a choice."
+        else:
+            vote_key = 'voted' + str(room_id)
+            if vote_key in request.session and request.session[vote_key] == room.reset_id:
+                error_message = "You already voted!"
+            else:
+                request.session[vote_key] = room.reset_id
+                selected_choice.votes += 1
+                selected_choice.save()
+                error_message = "Voted successfully!"
         return render(request, 'clicky/detail.html', {
             'room': room,
-            'error_message': "You didn't select a choice.",
+            'error_message': error_message,
         })
-    else:
-        vote_key = 'voted' + str(room_id)
-        if vote_key in request.session and request.session[vote_key] == room.reset_id:
-            return render(request, 'clicky/detail.html', {
-                'room': room,
-                'error_message': "You already voted!",
-            })
-        request.session[vote_key] = room.reset_id
-
-        selected_choice.votes += 1
-        selected_choice.save()
-        return render(request, 'clicky/detail.html', {
-            'room': room,
-            'error_message': "Voted successfully!",
-        })
+    elif request.method == 'GET':
+        return render(request, 'clicky/detail.html', {'room': room})
 
 
 def results(request, room_id, slug):
     room = validate_or_404(room_id, slug)
-    if get_room_admin(room_id) in request.session:
+    if (get_room_admin(room_id) in request.session) or room.can_see_results:
         request.session.set_expiry(43200)  # access expires in 12 hours
         return render(request, 'clicky/results.html', {'room': room})
     return HttpResponseForbidden()
@@ -108,7 +107,7 @@ def results(request, room_id, slug):
 
 def results_data(request, room_id, slug):
     room = validate_or_404(room_id, slug)
-    if get_room_admin(room_id) in request.session:
+    if (get_room_admin(room_id) in request.session) or room.can_see_results:
         room = Room.objects.get(pk=room_id)
         votes = []
         for choice in room.choice_set.order_by("id").iterator():

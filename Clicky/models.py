@@ -4,10 +4,11 @@ from hashid_field import HashidAutoField
 
 
 class Room(models.Model):
-    id = HashidAutoField(primary_key=True, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_length=4)
+    id = HashidAutoField(primary_key=True, alphabet="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_length=3)
     room_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
     reset_id = models.IntegerField(default=0)
+    can_see_results = models.BooleanField(default=False)
 
     def slug(self):
         return slugify(self.room_text)

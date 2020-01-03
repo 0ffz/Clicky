@@ -1,5 +1,9 @@
 {% extends 'clicky/base.html' %}
 {% block title %}Clicky - Create{% endblock %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'create.css' %}">
+{% endblock %}
 
 {% block content %}
     <h1><a class="home" href={% url 'clicky:index' %}><i class="fas fa-home"></i></a> Create new room</h1>
@@ -14,6 +18,11 @@
             {{ form.num_choices.label_tag }}
             {{ form.num_choices }}
         </div>
+        <div class="fieldWrapper checkbox-group">
+            {{ form.can_see_results }}
+            {{ form.can_see_results.label_tag }}
+        </div>
+
         <input class="button-primary" type="submit" value="Create">
         {{ form.captcha }}
     </form>

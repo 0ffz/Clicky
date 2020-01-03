@@ -33,7 +33,7 @@
         </div>
         <br><br>
         <input id="vote" class="button-primary" type="submit" value="Vote">
-        {% if request.session|is_room_admin:room.id %}
+        {% if room.can_see_results or request.session|is_room_admin:room.id %}
             <a id="results" class="button button-secondary" href="{% url 'clicky:results' room.id room.slug %}">View
                 Results</a>
         {% endif %}

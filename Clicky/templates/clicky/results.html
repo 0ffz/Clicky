@@ -1,6 +1,6 @@
 {% extends 'clicky/base.html' %}
 {% load clickytags %}
-{% block title %}Clicky - Results for {{room.room_text}}{% endblock %}
+{% block title %}Clicky - Results for {{ room.room_text }}{% endblock %}
 {% block head %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
@@ -17,7 +17,11 @@
         <canvas id="myChart"></canvas>
     </div>
 
-    <a class="button" href="{% url 'clicky:reset' room.id room.slug %}">Reset</a>
+
+    {% if request.session|is_room_admin:room.id %}
+        <a class="button" href="{% url 'clicky:reset' room.id room.slug %}">Reset</a>
+    {% endif %}
+    <a class="button" href="{% url 'clicky:vote' room.id room.slug%}">Vote</a>
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
         var data = {
@@ -76,16 +80,21 @@
             }
         });
 
-        $(window).blur(function () {
-            clearTimeout(refreshInterval);
-        }).focus(whileActive);
+        {% if request.session|is_room_admin:room.id %}
+            let refreshInterval;
+            function whileActive() {
+                refreshInterval = setInterval(
+                    function refreshInt() {
+                        refresh()
+                    }, 5000);
+            }
 
-        function whileActive() {
-            refreshInterval = setInterval(
-                function refreshInt() {
-                    refresh()
-                }, 5000)
-        }
+            $(window).blur(function () {
+                clearTimeout(refreshInterval);
+            }).focus(whileActive);
+
+            whileActive();
+        {% endif %}
 
         function refresh() {
             $.ajax({
@@ -98,6 +107,5 @@
         }
 
         refresh();
-        whileActive()
     </script>
 {% endblock %}
