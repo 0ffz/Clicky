@@ -100,7 +100,8 @@ def vote(request, room_id, slug):
 def results(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if (get_room_admin(room_id) in request.session) or room.can_see_results:
-        request.session.set_expiry(43200)  # access expires in 12 hours
+        # TODO this is removed temporarily. In the future permanent room codes should be given to logged-in users
+        # request.session.set_expiry(43200)  # access expires in 12 hours
         return render(request, 'clicky/results.html', {'room': room})
     return HttpResponseForbidden()
 
