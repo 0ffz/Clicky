@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -76,19 +77,17 @@ def vote(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if request.method == 'POST':
         error_message = ""
-        try:
-            selected_choice = room.choice_set.get(pk=request.POST['choice'])
-        except (KeyError, Choice.DoesNotExist):
-            error_message = "You didn't select a choice."
+        vote_key = 'voted' + str(room_id)
+        if vote_key in request.session and request.session[vote_key] == room.reset_id:
+            error_message = "You already voted!"
         else:
-            vote_key = 'voted' + str(room_id)
-            if vote_key in request.session and request.session[vote_key] == room.reset_id:
-                error_message = "You already voted!"
-            else:
+            try:
+                Choice.objects.filter(pk=request.POST['choice']).update(votes=F("votes") + 1)
                 request.session[vote_key] = room.reset_id
-                selected_choice.votes += 1
-                selected_choice.save()
                 error_message = "Voted successfully!"
+            except (KeyError, Choice.DoesNotExist):
+                # TODO rename to message
+                error_message = "You didn't select a choice."
         return render(request, 'clicky/detail.html', {
             'room': room,
             'error_message': error_message,
