@@ -33,7 +33,7 @@ class DetailView(generic.DetailView):
     model = Room
     template_name = 'clicky/detail.html'
     # slug_field = None
-    error_message = None
+    message = None
 
     def get(self, request, *args, **kwargs):
         return super(DetailView, self).get(request, *args, **kwargs)
@@ -43,7 +43,7 @@ class DetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['error_message'] = self.error_message
+        context['message'] = self.message
         return context
 
 
@@ -76,21 +76,20 @@ def create(request):
 def vote(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if request.method == 'POST':
-        error_message = ""
+        message = ""
         vote_key = 'voted' + str(room_id)
         if vote_key in request.session and request.session[vote_key] == room.reset_id:
-            error_message = "You already voted!"
+            message = "You already voted!"
         else:
             try:
-                Choice.objects.filter(pk=request.POST['choice']).update(votes=F("votes") + 1)
+                room.choice_set.filter(pk=request.POST['choice']).update(votes=F("votes") + 1)
                 request.session[vote_key] = room.reset_id
-                error_message = "Voted successfully!"
+                message = "Voted successfully!"
             except (KeyError, Choice.DoesNotExist):
-                # TODO rename to message
-                error_message = "You didn't select a choice."
+                message = "You didn't select a choice."
         return render(request, 'clicky/detail.html', {
             'room': room,
-            'error_message': error_message,
+            'message': message,
         })
     elif request.method == 'GET':
         return render(request, 'clicky/detail.html', {'room': room})
@@ -108,6 +107,8 @@ def results(request, room_id, slug):
 def results_data(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if (get_room_admin(room_id) in request.session) or room.can_see_results:
+        if not request.is_ajax():
+            return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug)))
         room = Room.objects.get(pk=room_id)
         votes = []
         for choice in room.choice_set.order_by("id").iterator():
@@ -127,5 +128,5 @@ def reset(request, room_id, slug):
         for choice in room.choice_set.iterator():
             choice.votes = 0
             choice.save()
-        return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug,)))
+        return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug)))
     return HttpResponseForbidden()
