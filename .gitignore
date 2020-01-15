@@ -4,3 +4,4 @@ recaptcha.txt
 *.sqlite3*
 venv-CPU
 __pycache__
+**/.sass-cache/**

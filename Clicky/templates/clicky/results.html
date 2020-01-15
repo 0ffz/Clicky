@@ -1,7 +1,9 @@
 {% extends 'clicky/base.html' %}
+{% load static %}
 {% load clickytags %}
 {% block title %}Clicky - Results for {{ room.room_text }}{% endblock %}
 {% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'results.min.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
 {% endblock %}
@@ -13,7 +15,7 @@
         <h1 class="six columns"> Code: {{ room.id }}</h1>
     </div>
 
-    <div class="chart-container" style="position: relative; height:70vh; width:100%">
+    <div class="chart-container">
         <canvas id="myChart"></canvas>
     </div>
 

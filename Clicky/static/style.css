@@ -28,27 +28,30 @@
     font-size: 26px;
 }
 
-html {
-    padding-top: 20px;
-}
 
 h1 {
     font-weight: 300;
 }
 
+html {
+    width: 100%;
+    margin: 0;
+    padding-top: 20px;
+}
+
 /* Larger than mobile */
 @media screen and (min-width: 550px) {
-    html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding-top: 0;
+    html {
+        padding-top: 10vh;
+    }
+
+    html, body {;
     }
 
     body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        /*display: flex;*/
+        /*justify-content: center;*/
+        /*align-items: center;*/
     }
 
     .home i {

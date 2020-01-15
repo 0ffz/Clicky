@@ -1,6 +1,6 @@
 from django import template
 
-from Clicky.views import get_room_admin
+from Clicky.views import is_admin
 
 register = template.Library()
 
@@ -12,4 +12,4 @@ def sort_by(queryset, order):
 
 @register.filter
 def is_room_admin(session, room_id):
-    return get_room_admin(room_id) in session
+    return is_admin(room_id, session)

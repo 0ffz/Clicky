@@ -2,7 +2,7 @@
 {% block title %}Clicky - Create{% endblock %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'create.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'create.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -26,4 +26,12 @@
         <input class="button-primary" type="submit" value="Create">
         {{ form.captcha }}
     </form>
+    {% if own_rooms %}
+        <h4>Your existing rooms:</h4>
+        <ul>
+            {% for room in own_rooms %}
+                <li><a href="/{{ room.id }}/{{ room.room_text }}/results">{{ room.room_text }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
