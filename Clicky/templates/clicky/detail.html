@@ -11,7 +11,11 @@
     <h3><a class="home" href={% url 'clicky:index' %}><i class="fas fa-home"></i></a> {{ room.room_text }}</h3>
     <div class="animated fadeInUp"><p class="animated fadeOutUp delay-2s">
         <strong>
-            {% if message %}{{ message }}
+            {% if messages %}
+                {#        {% if message.tags %} class="{{ message.tags }}"{% endif %}#}
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
             {% else %} Pick a choice from the list
             {% endif %}
         </strong></p></div>

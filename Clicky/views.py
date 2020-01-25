@@ -1,7 +1,7 @@
+from django.contrib import messages
 from django.db.models import F
-from django.http import HttpResponseRedirect, HttpResponseForbidden, Http404, JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.http import HttpResponseForbidden, Http404, JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views import generic
@@ -26,14 +26,12 @@ class IndexView(generic.FormView, generic.TemplateView):
         room_name = form.cleaned_data['room_name']
         room_code = form.cleaned_data['room_code'].upper()
 
-        return HttpResponseRedirect(reverse('clicky:detail', args=(room_code, slugify(room_name))))
+        return redirect('clicky:detail', room_code, slugify(room_name))
 
 
 class DetailView(generic.DetailView):
     model = Room
     template_name = 'clicky/detail.html'
-    # slug_field = None
-    message = None
 
     def get(self, request, *args, **kwargs):
         return super(DetailView, self).get(request, *args, **kwargs)
@@ -43,7 +41,6 @@ class DetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
-        context['message'] = self.message
         return context
 
 
@@ -62,10 +59,11 @@ def create(request):
                 room.choice_set.create(choice_text=x + 1)
 
             request.session[room_admin_tag(room.id)] = True
-            return HttpResponseRedirect(reverse('clicky:results', args=(room.id, room.slug())))
+            return redirect('clicky:results', room.id, room.slug())
     else:
         form = ClickyCreateForm()
-    own_rooms = [get_object_or_404(Room, id=str(name[10:])) for name in request.session.keys() if isinstance(name, str) and name.startswith('room_admin')]
+    own_rooms = [get_object_or_404(Room, id=str(name[10:])) for name in request.session.keys()
+                 if isinstance(name, str) and name.startswith('room_admin')]
     return render(request, 'clicky/create.html', {'form': form, 'own_rooms': own_rooms})
 
 
@@ -73,21 +71,17 @@ def vote(request, room_id, slug):
     room = validate_or_404(room_id, slug)
 
     if request.method == 'POST':
-        message = ""
         vote_key = 'voted' + str(room_id)
         if vote_key in request.session and request.session[vote_key] == room.reset_id:
-            message = "You already voted!"
+            messages.warning(request, "You already voted!")
         else:
             try:
                 room.choice_set.filter(pk=request.POST['choice']).update(votes=F("votes") + 1)
                 request.session[vote_key] = room.reset_id
-                message = "Voted successfully!"
+                messages.info(request, 'Voted successfully!')
             except (KeyError, Choice.DoesNotExist):
-                message = "You didn't select a choice."
-        return render(request, 'clicky/detail.html', {
-            'room': room,
-            'message': message,
-        })
+                messages.warning(request, "You didn't select a choice.")
+        return redirect('clicky:detail', room.id, slug)
     elif request.method == 'GET':
         return render(request, 'clicky/detail.html', {'room': room})
 
@@ -114,15 +108,12 @@ def results_data(request, room_id, slug):
     if (is_admin(room_id, request.session)) or room.can_see_results:
         # TODO trying to fix wrong vote count showing by seeing whether it is a problem with the JSON sent back
         # if not request.is_ajax():
-        #     return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug)))
+        #     return redirect('clicky:results', room.id, slug)
         room = Room.objects.get(pk=room_id)
         votes = []
         for choice in room.choice_set.order_by("id").iterator():
-            choice.refresh_from_db()
             votes += str(choice.votes)
-        data = {
-            'votes': votes
-        }
+        data = {'votes': votes}
         return JsonResponse(data)
     return HttpResponseForbidden()
 
@@ -135,5 +126,5 @@ def reset(request, room_id, slug):
         for choice in room.choice_set.iterator():
             choice.votes = 0
             choice.save()
-        return HttpResponseRedirect(reverse('clicky:results', args=(room.id, slug)))
+        return redirect('clicky:results', room.id, slug)
     return HttpResponseForbidden()
