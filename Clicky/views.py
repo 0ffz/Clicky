@@ -106,13 +106,13 @@ def results(request, room_id, slug):
 def results_data(request, room_id, slug):
     room = validate_or_404(room_id, slug)
     if (is_admin(room_id, request.session)) or room.can_see_results:
-        # TODO trying to fix wrong vote count showing by seeing whether it is a problem with the JSON sent back
-        # if not request.is_ajax():
-        #     return redirect('clicky:results', room.id, slug)
+        if not request.is_ajax():
+            return redirect('clicky:results', room.id, slug)
         room = Room.objects.get(pk=room_id)
         votes = []
         for choice in room.choice_set.order_by("id").iterator():
-            votes += str(choice.votes)
+            votes.append(str(choice.votes))
+
         data = {'votes': votes}
         return JsonResponse(data)
     return HttpResponseForbidden()
