@@ -30,7 +30,7 @@ HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT', 'j8k@bbe#%5h4m+2uqg!g*y#
 # DEBUG = False
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['clickychoice.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['clicky.offz.me', '127.0.0.1']
 
 # Application definition
 
