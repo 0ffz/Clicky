@@ -27,7 +27,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='13z7v(*kq+ar=1(+xh*$a76ou#np_
 HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT', 'j8k@bbe#%5h4m+2uqg!g*y#l7(r0371qtwxh!n7_z4k7p$-tbi')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
 DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = ['clicky.offz.me', '127.0.0.1']
@@ -134,16 +133,18 @@ def get_captcha_key():
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-# The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 # The URL to use when referring to static files (where they will be served from)
 STATIC_URL = '/static/'
 
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
+# Following settings only make sense on production and may break development environments.
+if not DEBUG:
+    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGGING = False
 # {
