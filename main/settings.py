@@ -23,12 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '13z7v(*kq+ar=1(+xh*$a76ou#np_bf709t*1zxw^icir^cr-p')
+SECRET_KEY = os.environ.get('SECRET_KEY', default='13z7v(*kq+ar=1(+xh*$a76ou#np_bf709t*1zxw^icir^cr-p')
 HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT', 'j8k@bbe#%5h4m+2uqg!g*y#l7(r0371qtwxh!n7_z4k7p$-tbi')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = False
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = ['clicky.offz.me', '127.0.0.1']
 
