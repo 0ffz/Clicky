@@ -28,6 +28,7 @@ HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT', 'j8k@bbe#%5h4m+2uqg!g*y#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
+DEBUG = False
 
 ALLOWED_HOSTS = ['clicky.offz.me', '127.0.0.1']
 
@@ -134,14 +135,14 @@ def get_captcha_key():
 STATIC_URL = '/static/'
 
 # Following settings only make sense on production and may break development environments.
-if not DEBUG:
-    # Tell Django to copy statics to the `staticfiles` directory
-    # in your application directory on Render.
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# if not DEBUG:
+# Tell Django to copy statics to the `staticfiles` directory
+# in your application directory on Render.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-    # Turn on WhiteNoise storage backend that takes care of compressing static files
-    # and creating unique names for each version so they can safely be cached forever.
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Turn on WhiteNoise storage backend that takes care of compressing static files
+# and creating unique names for each version so they can safely be cached forever.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGGING = False
 # {
