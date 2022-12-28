@@ -28,7 +28,7 @@ HASHID_FIELD_SALT = os.environ.get('HASHID_FIELD_SALT', 'j8k@bbe#%5h4m+2uqg!g*y#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['clicky.offz.me', '127.0.0.1']
 
