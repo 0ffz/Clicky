@@ -1,0 +1,5 @@
+.gradle
+build/
+.idea
+.kotlin
+server/src/main/resources/web/styles/tailwind.css

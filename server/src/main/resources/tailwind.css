@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@source "../kotlin/**.kt";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "@tailwindcss/typography";
+/*@plugin "@tailwindcss/forms";*/
+
+@layer base {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        @apply w-full px-3 py-2 text-base placeholder-gray-500 border;
+        @apply rounded-md border-gray-300 shadow-sm sm:text-sm;
+        @apply focus:outline-none focus:ring focus:ring-blue-500;
+        @apply dark:bg-zinc-800 dark:border-zinc-500;
+    }
+
+    label {
+        @apply block;
+    }
+
+
+    form {
+        button[type="submit"],
+        input[type="submit"],
+        button {
+            @apply px-4 py-2 bg-zinc-700 text-white text-sm font-medium rounded-md shadow-sm;
+            @apply focus:outline-none hover:bg-zinc-700 focus:ring-2 focus:ring-blue-500;
+            @apply dark:bg-zinc-700 dark:hover:bg-zinc-600;
+        }
+
+        @apply grid grid-cols-1 gap-4;
+    }
+
+    .icon {
+        @apply w-4 h-4;
+    }
+}
+
+@layer utilities {
+    .primary {
+        @apply bg-blue-600 text-white;
+    }
+
+    .demphasized {
+        @apply text-zinc-600 dark:text-zinc-400;
+    }
+}
