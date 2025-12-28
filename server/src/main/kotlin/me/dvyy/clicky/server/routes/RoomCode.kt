@@ -112,11 +112,9 @@ fun Route.roomCodeRoutes() = route("/{room}") {
             }.debounce(clicky.config.chartUpdateInterval).collectLatest { result ->
                 send(result, event = "chart")
             }
-            println("Flow cancelled in launch")
         }
         launch {
             combine(room.reset, room.options) { _, options -> options }.collectLatest {
-                println("Sending options")
                 send(buildString {
                     appendHTML().div {
                         id = "options"
