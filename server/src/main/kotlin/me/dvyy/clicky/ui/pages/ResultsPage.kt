@@ -30,9 +30,8 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplat
             }
         }
     }
-//        div("flex flex-col items-center justify-center gap-4") {
+
     div {
-//        attributes["ws-connect"] = "/room/$room/live"
         attributes["sse-connect"] = "/room/$code/live"
         div {
             attributes["sse-swap"] = "room-not-found"

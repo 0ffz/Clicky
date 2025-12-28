@@ -13,17 +13,12 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.html.div
 import kotlinx.html.html
 import kotlinx.html.id
 import kotlinx.html.stream.appendHTML
-import me.dvyy.clicky.server.data.UserSession
-import me.dvyy.clicky.server.data.Clicky
-import me.dvyy.clicky.server.data.ensureRoomOwner
-import me.dvyy.clicky.server.data.getRoomOrNull
-import me.dvyy.clicky.server.data.getRoomOrStop
+import me.dvyy.clicky.server.data.*
 import me.dvyy.clicky.server.data.exceptions.RoomNotFoundException
 import me.dvyy.clicky.ui.components.barChart
 import me.dvyy.clicky.ui.components.voteOptions
@@ -49,7 +44,7 @@ fun Route.roomCodeRoutes() = route("/{room}") {
         val session = call.principal<UserSession>() ?: return@post
         val formParams = call.receiveParameters()
         val option = formParams.getOrFail<Int>("option")
-        room.votes.update { it.put(session.id, option) }
+        room.vote(session.id, option)
         call.respond(HttpStatusCode.OK)
 
     }
@@ -62,7 +57,7 @@ fun Route.roomCodeRoutes() = route("/{room}") {
                 "add" -> {
                     val newOption = formParams.getOrFail<String>("option")
                     if (newOption != "") {
-                        room.options.update { it.add(newOption) }
+                        room.addOption(newOption)
                         call.respond(HttpStatusCode.OK)
                     } else {
                         call.respond(HttpStatusCode.BadRequest)
@@ -71,26 +66,29 @@ fun Route.roomCodeRoutes() = route("/{room}") {
 
                 "delete" -> {
                     val optionToDelete = formParams.getOrFail<Int>("option")
-                    room.options.update { it.removeAt(optionToDelete) }
+                    room.removeOption(optionToDelete)
                     call.respond(HttpStatusCode.OK)
                 }
 
                 "reset" -> {
-                    room.votes.update { it.clear() }
+                    room.clearVotes()
+                    call.respond(HttpStatusCode.OK)
                 }
             }
         }
     }
 
     sse("/live") {
-        val room = call.getRoomOrNull() ?: return@sse run {
-            val roomId = call.parameters.getOrFail<String>("room")
+        val roomId = call.parameters.getOrFail<String>("room")
+        suspend fun sendRoomClosed() {
             send(
                 buildString { appendHTML().html { homePage(RoomNotFoundException(roomId)) } },
                 event = "room-not-found"
             )
             close()
         }
+
+        val room = call.getRoomOrNull() ?: return@sse sendRoomClosed()
         call.principal<UserSession>() ?: return@sse close()
         val isOwner = room.admin == call.principal<UserSession>()?.id
 
@@ -114,15 +112,20 @@ fun Route.roomCodeRoutes() = route("/{room}") {
             }.debounce(clicky.config.chartUpdateInterval).collectLatest { result ->
                 send(result, event = "chart")
             }
+            println("Flow cancelled in launch")
         }
-
-        room.options.collectLatest {
-            send(buildString {
-                appendHTML().div {
-                    id = "options"
-                    voteOptions(room.code, it)
-                }
-            }, event = "options")
+        launch {
+            combine(room.reset, room.options) { _, options -> options }.collectLatest {
+                println("Sending options")
+                send(buildString {
+                    appendHTML().div {
+                        id = "options"
+                        voteOptions(room.code, it)
+                    }
+                }, event = "options")
+            }
         }
+        room.awaitClose()
+        sendRoomClosed()
     }
 }

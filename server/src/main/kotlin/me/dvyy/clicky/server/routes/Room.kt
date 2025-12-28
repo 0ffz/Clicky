@@ -6,8 +6,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
-import me.dvyy.clicky.server.data.UserSession
 import me.dvyy.clicky.server.data.Clicky
+import me.dvyy.clicky.server.data.UserSession
 
 context(clicky: Clicky)
 fun Route.roomRoutes() = route("/room") {
@@ -19,7 +19,7 @@ fun Route.roomRoutes() = route("/room") {
     post {
         val roomId = call.receiveParameters().getOrFail<String>("name")
         val session = call.principal<UserSession>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-        val room = clicky.rooms.create(roomId, session.id) ?: return@post call.respond(HttpStatusCode.Conflict)
+        val room = clicky.rooms.create(roomId, session.id)
         call.respondRedirect("/room/${room.code}")
     }
 

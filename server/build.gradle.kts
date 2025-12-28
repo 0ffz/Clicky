@@ -33,7 +33,8 @@ dependencies {
     implementation(libs.sqids)
     implementation(libs.shocky.icons)
     implementation(libs.qrcode)
-    implementation(libs.guava)
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
+
 
     // Ktor
     implementation(libs.ktor.serialization.kotlinx.json)
@@ -63,9 +64,7 @@ ktor {
     docker {
         jreVersion = JavaVersion.VERSION_25
         localImageName = "ghcr.io/0ffz/clicky"
-        imageTag = "azul"
     }
-    development = true
 }
 
 tasks {

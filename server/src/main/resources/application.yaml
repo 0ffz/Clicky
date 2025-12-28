@@ -4,10 +4,13 @@ ktor:
       - me.dvyy.clicky.server.ApplicationKt.module
   deployment:
     port: 8080
-    watch: [ classes ]
-  development: true
 site:
-  url: http://localhost:8080
-  rate_limit: 100
+  # Root URL of the site, used for QR code
+  url: ${SITE_URL:http://localhost:8080}
+  # Global rate limit for all users, in requests per 10 seconds.
+  rate_limit: ${SITE_RATE_LIMIT:100}
   chart:
-    update_interval: 0.2
+    # Debounce time for chart updates in seconds (0 or less to disable.)
+    update_interval: ${SITE_CHART_UPDATE_INTERVAL:0.2}
+  # Time in hours after which inactive rooms are deleted, clients will be sent back to the homepage.
+  inactive_room_timeout: ${SITE_INACTIVE_ROOM_TIMEOUT:24}

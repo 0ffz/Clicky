@@ -53,8 +53,15 @@ object Colors {
     )
 
 
-    fun border(index: Int) = borders.getOrElse(index) { "border-sky-600" }
-    fun color(index: Int) = colors.getOrElse(index) { "bg-sky-500" }
+    fun border(index: Int): String {
+        return if (index == -1) "border-zinc-500"
+        else borders.getOrElse(index) { "border-sky-600" }
+    }
+
+    fun color(index: Int): String {
+        return if (index == -1) ""
+        else colors.getOrElse(index) { "bg-sky-500" }
+    }
 }
 
 fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, Int>>) {
