@@ -50,6 +50,7 @@ dependencies {
     testImplementation(libs.kotlin.test.junit)
     implementation("org.sqids:sqids-kotlin:0.1.1")
     implementation("me.dvyy:shocky-icons:0.3.0-dev.6")
+    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
 }
 
 ktor {

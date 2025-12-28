@@ -5,16 +5,24 @@ import io.ktor.htmx.html.hx
 import kotlinx.html.*
 import me.dvyy.me.dvyy.clicky.ui.components.adminOptions
 import me.dvyy.me.dvyy.clicky.ui.components.barChart
+import me.dvyy.me.dvyy.clicky.ui.components.qrCode
 import me.dvyy.me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.me.dvyy.clicky.ui.templates.defaultTemplate
 
 fun HTML.resultsPage(isRoomOwner: Boolean, room: String) = defaultTemplate {
     content {
-        h1("mb-0") {
-            +"Room: "
-            span("font-mono") { +room }
+        div("flex items-start justify-between gap-4") {
+            div("flex-1") {
+                h1("mb-0") {
+                    +"Room: "
+                    span("font-mono") { +room }
+                }
+                a(href = "/") { span { +"< Back" } }
+            }
+            if (isRoomOwner) {
+                qrCode(room, "w-32 h-32")
+            }
         }
-        a(href = "/") { span { +"< Back" } }
     }
 //        div("flex flex-col items-center justify-center gap-4") {
     div {

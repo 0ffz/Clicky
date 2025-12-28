@@ -54,7 +54,7 @@ fun Application.configureRouting() {
     install(SSE)
     routing {
         staticResources("/", "/web")
-
+        configureQRRouting()
         authenticate("session") {
             get("/") {
                 call.respondHtml {
