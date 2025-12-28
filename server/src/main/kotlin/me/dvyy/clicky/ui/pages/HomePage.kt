@@ -1,11 +1,11 @@
-package me.dvyy.me.dvyy.clicky.ui.pages
+package me.dvyy.clicky.ui.pages
 
 import kotlinx.html.FlowContent
 import kotlinx.html.HTML
 import kotlinx.html.div
 import kotlinx.html.h1
-import me.dvyy.me.dvyy.clicky.ui.components.pageButton
-import me.dvyy.me.dvyy.clicky.ui.templates.defaultTemplate
+import me.dvyy.clicky.ui.components.pageButton
+import me.dvyy.clicky.ui.templates.defaultTemplate
 
 fun HTML.homePage(
     exception: Exception? = null,

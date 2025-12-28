@@ -1,4 +1,4 @@
-package me.dvyy.me.dvyy.clicky.data
+package me.dvyy.clicky.server.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*

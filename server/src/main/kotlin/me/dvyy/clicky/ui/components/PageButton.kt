@@ -1,15 +1,15 @@
-package me.dvyy.me.dvyy.clicky.ui.components
+package me.dvyy.clicky.ui.components
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
-import me.dvyy.me.dvyy.clicky.data.routes.RoomNotFoundException
-import me.dvyy.me.dvyy.clicky.ui.pages.errorBanner
+import me.dvyy.clicky.server.data.exceptions.RoomNotFoundException
+import me.dvyy.clicky.ui.pages.errorBanner
 
 fun DIV.pageButton(exception: Exception?) {
     h2 { +"Join room" }
     optionsForm {
         attributes.hx {
-            post = "/rooms"
+            get = "/room"
             swap = "outerHTML"
             target = "body"
         }
@@ -28,7 +28,7 @@ fun DIV.pageButton(exception: Exception?) {
                 }
             }
         }
-        if (exception is RoomNotFoundException) errorBanner("Room not found: ${exception.roomId}")
+        if (exception is RoomNotFoundException) errorBanner("Room not found: ${exception.roomCode}")
     }
     details {
         summary {
@@ -36,7 +36,7 @@ fun DIV.pageButton(exception: Exception?) {
         }
         optionsForm {
             attributes.hx {
-                post = "/create"
+                post = "/room"
                 swap = "outerHTML"
                 target = "body"
             }

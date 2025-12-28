@@ -3,7 +3,7 @@ package me.dvyy
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import me.dvyy.me.dvyy.clicky.data.module
+import me.dvyy.clicky.server.module
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

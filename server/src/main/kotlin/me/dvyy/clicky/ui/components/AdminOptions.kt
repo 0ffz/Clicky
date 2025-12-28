@@ -1,4 +1,4 @@
-package me.dvyy.me.dvyy.clicky.ui.components
+package me.dvyy.clicky.ui.components
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
@@ -6,7 +6,7 @@ import kotlinx.html.*
 fun FlowContent.adminOptions(room: String) {
     optionsForm {
         attributes.hx {
-            post = "/rooms/$room/admin"
+            post = "/room/$room/admin"
             vals = """{ "action": "add" }"""
             swap = "none"
             on[":after-request"] = "if(event.detail.successful) this.reset()"
@@ -28,7 +28,7 @@ fun FlowContent.adminOptions(room: String) {
         button {
             id = "resetButton"
             attributes.hx {
-                post = "/rooms/$room/admin"
+                post = "/room/$room/admin"
                 vals = """{ "action": "reset" }"""
             }
             +"Reset"

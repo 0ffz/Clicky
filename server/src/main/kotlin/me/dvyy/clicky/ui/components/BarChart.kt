@@ -1,4 +1,4 @@
-package me.dvyy.me.dvyy.clicky.ui.components
+package me.dvyy.clicky.ui.components
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
@@ -19,7 +19,6 @@ object Colors {
             "bg-red-500",
             "bg-amber-500",
             "bg-emerald-500",
-            "bg-sky-500",
             "bg-blue-500",
             "bg-indigo-500",
             "bg-fuchsia-500",
@@ -38,7 +37,6 @@ object Colors {
         "border-red-700",
         "border-amber-700",
         "border-emerald-700",
-        "border-sky-700",
         "border-blue-700",
         "border-indigo-700",
         "border-fuchsia-700",
@@ -55,34 +53,36 @@ object Colors {
     )
 
 
-    fun border(index: Int) = borders.getOrElse(index) { "border-blue-600" }
-    fun color(index: Int) = colors.getOrElse(index) { "bg-blue-500" }
+    fun border(index: Int) = borders.getOrElse(index) { "border-sky-600" }
+    fun color(index: Int) = colors.getOrElse(index) { "bg-sky-500" }
 }
 
 fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, Int>>) {
-    div("grid grid-flow-col auto-cols-min grid-rows-[auto_1fr] gap-x-4 max-md:px-4 md:justify-center") {
-        if (hidden) return@div
-        val max = map.maxByOrNull { it.second }?.second ?: 1
-        map.forEachIndexed { index, (column, value) ->
-            div("grid grid-rows-[subgrid] row-span-2 items-center gap-2 w-20") {
-                div("flex-1 flex items-end justify-center h-64") {
-                    val percentage = if (max > 0) (value.toDouble() / max * 100).toInt() else 0
-                    div("${Colors.color(index)} ${Colors.border(index)} border-4 w-20 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
-                        id = "bar-$index"
-                        style = "height: ${percentage}%"
-                        if (percentage > 10) {
-                            +value.toString()
+    div("wrapper") {
+        div("grid grid-flow-col auto-cols-min grid-rows-[auto_1fr] gap-x-4 px-4") {
+            if (hidden) return@div
+            val max = map.maxByOrNull { it.second }?.second ?: 1
+            map.forEachIndexed { index, (column, value) ->
+                div("grid grid-rows-[subgrid] row-span-2 items-center gap-2 w-20") {
+                    div("flex-1 flex items-end justify-center h-64") {
+                        val percentage = if (max > 0) (value.toDouble() / max * 100).toInt() else 0
+                        div("${Colors.color(index)} ${Colors.border(index)} border-4 w-20 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
+                            id = "bar-$index"
+                            style = "height: ${percentage}%"
+                            if (percentage > 10) {
+                                +value.toString()
+                            }
                         }
                     }
-                }
-                div("text-sm text-center font-medium items-start h-full gap-1") {
-                    span("break-words wrap-anywhere min-w-0 text-ellipsis") { +column }
-                    button {
-                        attributes.hx {
-                            post = "/rooms/$room/admin"
-                            vals = """{ "action": "delete", "option": "$index" }"""
+                    div("text-sm text-center font-medium items-start h-full gap-1") {
+                        span("break-words wrap-anywhere min-w-0 text-ellipsis") { +column }
+                        button {
+                            attributes.hx {
+                                post = "/room/$room/admin"
+                                vals = """{ "action": "delete", "option": "$index" }"""
+                            }
+                            icon("trash", "demphasized")
                         }
-                        icon("trash", "demphasized")
                     }
                 }
             }

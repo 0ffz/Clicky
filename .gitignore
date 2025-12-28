@@ -2,4 +2,4 @@
 build/
 .idea
 .kotlin
-server/src/main/resources/web/styles/tailwind.css
+server/src/main/resources/web/styles/style.css

@@ -16,15 +16,10 @@ import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.io.path.*
 
-class TailwindPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-    }
-}
-
 /**
  * Gets OS preferred path for storing applications, this is used to cache tailwind verisons.
  */
-val shockyInstallPath: Path = run {
+private val shockyInstallPath: Path = run {
     val osName = System.getProperty("os.name").lowercase()
     val userHome = System.getProperty("user.home")
 
@@ -34,10 +29,17 @@ val shockyInstallPath: Path = run {
         else -> Path(userHome) / ".local" / "share" / "shocky"
     }
 }
-val tailwindVersion: String = "v4.1.7"
-val dest = shockyInstallPath / "tailwind" / "tailwind-cli-${tailwindVersion}"
+private val tailwindVersion: String = "v4.1.7"
+private val tailwindExecutable = shockyInstallPath / "tailwind" / "tailwind-cli-${tailwindVersion}"
 
-class InstalltailwindCssTask : DefaultTask() {
+class TailwindPlugin : Plugin<Project> {
+    override fun apply(target: Project) {
+    }
+}
+
+abstract class InstallTailwindCssTask : DefaultTask() {
+    @OutputFile
+    val dest = tailwindExecutable
 
     @TaskAction
     fun run() {
@@ -67,7 +69,6 @@ class InstalltailwindCssTask : DefaultTask() {
         }
         val tailwindUrl = "$tailwindBaseUrl/$tailwindFileName"
 
-        dest.parent.createDirectories()
         URL(tailwindUrl).openStream().use { input ->
             Files.copy(input, dest)
         }
@@ -95,7 +96,7 @@ abstract class GenerateTailwindCssTask : DefaultTask() {
         execOperations.exec {
             val input = input.asFile.get().toPath().pathString
             val output = output.asFile.get().toPath().pathString
-            it.commandLine(listOf(dest.pathString, "-i", input, "-o", output, "--minify"))
+            it.commandLine(listOf(tailwindExecutable.pathString, "-i", input, "-o", output, "--minify"))
         }
     }
 }

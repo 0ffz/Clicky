@@ -1,14 +1,14 @@
-package me.dvyy.me.dvyy.clicky.ui.pages
+package me.dvyy.clicky.ui.pages
 
 
-import io.ktor.htmx.html.hx
+import io.ktor.htmx.html.*
 import kotlinx.html.*
-import me.dvyy.me.dvyy.clicky.data.routes.RoomViewModel
-import me.dvyy.me.dvyy.clicky.ui.components.adminOptions
-import me.dvyy.me.dvyy.clicky.ui.components.barChart
-import me.dvyy.me.dvyy.clicky.ui.components.qrCode
-import me.dvyy.me.dvyy.clicky.ui.components.voteOptions
-import me.dvyy.me.dvyy.clicky.ui.templates.defaultTemplate
+import me.dvyy.clicky.server.data.RoomViewModel
+import me.dvyy.clicky.ui.components.adminOptions
+import me.dvyy.clicky.ui.components.barChart
+import me.dvyy.clicky.ui.components.qrCode
+import me.dvyy.clicky.ui.components.voteOptions
+import me.dvyy.clicky.ui.templates.defaultTemplate
 
 fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplate {
     val code = room.code
@@ -32,8 +32,8 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplat
     }
 //        div("flex flex-col items-center justify-center gap-4") {
     div {
-//        attributes["ws-connect"] = "/rooms/$room/live"
-        attributes["sse-connect"] = "/rooms/$code/live"
+//        attributes["ws-connect"] = "/room/$room/live"
+        attributes["sse-connect"] = "/room/$code/live"
         div {
             attributes["sse-swap"] = "room-not-found"
             attributes.hx {

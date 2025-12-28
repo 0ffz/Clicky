@@ -1,10 +1,13 @@
 ktor:
-    application:
-        modules:
-            - me.dvyy.me.dvyy.clicky.data.ApplicationKt.module
-    deployment:
-        port: 8080
-        watch: [ classes ]
-    development: true
+  application:
+    modules:
+      - me.dvyy.clicky.server.ApplicationKt.module
+  deployment:
+    port: 8080
+    watch: [ classes ]
+  development: true
 site:
-    url: http://localhost:8080
+  url: http://localhost:8080
+  rate_limit: 100
+  chart:
+    update_interval: 0.2

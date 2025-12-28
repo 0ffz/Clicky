@@ -1,4 +1,5 @@
 import me.dvyy.tailwind.GenerateTailwindCssTask
+import me.dvyy.tailwind.InstallTailwindCssTask
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -16,20 +17,25 @@ repositories {
     maven("https://repo.mineinabyss.com/releases")
     maven("https://repo.mineinabyss.com/snapshots")
 }
-//tasks.withType<ProcessResources> {
-//    val wasmOutput = file("../web/build/dist/wasmJs/productionExecutable")
-//    if (wasmOutput.exists()) {
-//        inputs.dir(wasmOutput)
-//    }
-//
-//    from("../web/build/dist/wasmJs/productionExecutable") {
-//        into("web")
-//        include("**/*")
-//    }
-//    duplicatesStrategy = DuplicatesStrategy.WARN
-//}
+
+kotlin {
+    jvmToolchain(25)
+    compilerOptions {
+        optIn.addAll("kotlin.uuid.ExperimentalUuidApi", "io.ktor.utils.io.ExperimentalKtorApi")
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
 
 dependencies {
+    // Dependencies
+    implementation(libs.logback.classic)
+    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.sqids)
+    implementation(libs.shocky.icons)
+    implementation(libs.qrcode)
+    implementation(libs.guava)
+
+    // Ktor
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.core)
@@ -45,25 +51,30 @@ dependencies {
     implementation(libs.ktor.server.htmx)
     implementation(libs.ktor.htmx.html)
     implementation(libs.ktor.server.netty)
-    implementation(libs.logback.classic)
-    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation("io.ktor:ktor-server-caching-headers:3.3.2")
+
+    // Tests
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    implementation("org.sqids:sqids-kotlin:0.1.1")
-    implementation("me.dvyy:shocky-icons:0.3.0-dev.6")
-    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
 }
 
 ktor {
+    docker {
+        jreVersion = JavaVersion.VERSION_25
+        localImageName = "ghcr.io/0ffz/clicky"
+        imageTag = "azul"
+    }
     development = true
 }
 
 tasks {
+    register<InstallTailwindCssTask>("installTailwind")
     register<GenerateTailwindCssTask>("tailwind") {
         input = file("src/main/resources/tailwind.css")
-        output = file("src/main/resources/web/styles/tailwind.css")
+        output = file("src/main/resources/web/styles/style.css")
         watch = file("src/main/kotlin")
+        dependsOn("installTailwind")
     }
     processResources { dependsOn("tailwind") }
 }
