@@ -19,6 +19,7 @@ fun DIV.pageButton(exception: Exception?) {
             div("flex gap-2") {
                 input(type = InputType.text, classes = "uppercase") {
                     id = "pageName"
+                    required = true
                     name = "name"
                 }
 
@@ -42,6 +43,7 @@ fun DIV.pageButton(exception: Exception?) {
             div("flex gap-2") {
                 input(type = InputType.text) {
                     id = "pageName"
+                    required = true
                     name = "name"
                 }
 

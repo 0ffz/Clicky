@@ -17,6 +17,7 @@ fun FlowContent.adminOptions(room: String) {
 
                 textInput {
                     id = "option"
+                    required = true
                     name = "option"
                 }
                 submitInput(classes = "primary") {

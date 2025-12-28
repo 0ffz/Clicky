@@ -44,5 +44,6 @@ fun Application.module() {
     configureSecurity()
     configureSockets()
     configureRouting()
+    configureRateLimit()
     configureStatusPages()
 }

@@ -18,8 +18,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.html.DIV
 import kotlinx.html.div
+import kotlinx.html.html
 import kotlinx.html.id
 import kotlinx.html.stream.appendHTML
+import kotlinx.html.stream.createHTML
 import me.dvyy.me.dvyy.clicky.data.UserSession
 import me.dvyy.me.dvyy.clicky.data.createRoom
 import me.dvyy.me.dvyy.clicky.data.ensureRoomOwner
@@ -38,16 +40,19 @@ class RoomViewModel(
     val admin: Uuid,
 ) {
     val votes = MutableStateFlow(mapOf<Uuid, Int>())
-    val options = MutableStateFlow(listOf("A", "B", "C"))
+    val options = MutableStateFlow(listOf("A", "B", "C", "D"))
     val hidden = MutableStateFlow(false)
 }
 
 class RoomNotFoundException(val roomId: String) : Exception()
 
-fun ApplicationCall.getRoomOrStop(): RoomViewModel {
+fun ApplicationCall.getRoomOrNull(): RoomViewModel? {
     val roomId = parameters.getOrFail<String>("room")
-    return getRoom(roomId) ?: throw RoomNotFoundException(roomId)
+    return getRoom(roomId)
 }
+
+fun ApplicationCall.getRoomOrStop(): RoomViewModel =
+    getRoomOrNull() ?: throw RoomNotFoundException(parameters.getOrFail<String>("room"))
 
 @OptIn(ExperimentalUuidApi::class)
 fun Application.configureRouting() {
@@ -63,7 +68,7 @@ fun Application.configureRouting() {
             }
 
             post("/create") {
-                val roomId = call.receiveParameters().getOrFail<String>("name").uppercase()
+                val roomId = call.receiveParameters().getOrFail<String>("name")
                 val session = call.principal<UserSession>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val room = createRoom(roomId, session.id) ?: return@post call.respond(HttpStatusCode.Conflict)
                 call.respondRedirect("/rooms/${room.code}")
@@ -80,7 +85,7 @@ fun Application.configureRouting() {
                     val isOwner = room.admin == call.principal<UserSession>()?.id
                     call.response.headers.append(HxResponseHeaders.PushUrl, "/rooms/${room.code}")
                     call.respondHtml {
-                        resultsPage(isOwner, room.code)
+                        resultsPage(isOwner, room)
                     }
                 }
                 post("/{room}/admin") {
@@ -124,7 +129,11 @@ fun Application.configureRouting() {
             }
 
             sse("/rooms/{room}/live") {
-                val room = call.getRoomOrStop()
+                val room = call.getRoomOrNull() ?: return@sse run {
+                    val roomId = call.parameters.getOrFail<String>("room")
+                    send(buildString { appendHTML().html { homePage(RoomNotFoundException(roomId)) } }, event = "room-not-found")
+                    close()
+                }
                 val session = call.principal<UserSession>()
                     ?: return@sse close()//CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
                 val isOwner = room.admin == call.principal<UserSession>()?.id
