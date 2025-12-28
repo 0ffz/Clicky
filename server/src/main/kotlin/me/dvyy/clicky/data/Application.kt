@@ -2,6 +2,7 @@ package me.dvyy.me.dvyy.clicky.data
 
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import io.ktor.util.collections.ConcurrentMap
 import me.dvyy.me.dvyy.clicky.data.routes.RoomViewModel
 import me.dvyy.me.dvyy.clicky.data.routes.configureRouting
 import org.sqids.Sqids
@@ -17,7 +18,7 @@ fun main(args: Array<String>) {
 }
 
 
-val rooms = mutableMapOf<String, RoomViewModel>()
+val rooms = ConcurrentMap<String, RoomViewModel>()
 val random = Random(System.currentTimeMillis())
 
 @OptIn(ExperimentalUuidApi::class)
@@ -35,7 +36,7 @@ fun createRoom(name: String, admin: Uuid): RoomViewModel? {
 @OptIn(ExperimentalAtomicApi::class)
 val counter = AtomicLong(0L)
 private val sqids = Sqids(
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray().apply { shuffle() }.concatToString(),
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray().apply { shuffle() }.concatToString(),
 //    minLength = 4,
 )
 

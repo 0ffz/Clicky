@@ -11,9 +11,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.server.util.*
+import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.persistentHashMapOf
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.html.DIV
@@ -30,6 +34,7 @@ import me.dvyy.me.dvyy.clicky.ui.components.barChart
 import me.dvyy.me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.me.dvyy.clicky.ui.pages.homePage
 import me.dvyy.me.dvyy.clicky.ui.pages.resultsPage
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -39,8 +44,8 @@ class RoomViewModel(
     val code: String,
     val admin: Uuid,
 ) {
-    val votes = MutableStateFlow(mapOf<Uuid, Int>())
-    val options = MutableStateFlow(listOf("A", "B", "C", "D"))
+    val votes = MutableStateFlow(persistentHashMapOf<Uuid, Int>())
+    val options = MutableStateFlow(persistentListOf("A", "B", "C", "D"))
     val hidden = MutableStateFlow(false)
 }
 
@@ -97,7 +102,7 @@ fun Application.configureRouting() {
                             "add" -> {
                                 val newOption = formParams.getOrFail<String>("option")
                                 if (newOption != "") {
-                                    room.options.update { it + newOption }
+                                    room.options.update { it.add(newOption) }
                                     call.respond(HttpStatusCode.OK)
                                 } else {
                                     call.respond(HttpStatusCode.BadRequest)
@@ -106,12 +111,12 @@ fun Application.configureRouting() {
 
                             "delete" -> {
                                 val optionToDelete = formParams.getOrFail<Int>("option")
-                                room.options.update { it.filterIndexed { index, _ -> index != optionToDelete } }
+                                room.options.update { it.removeAt(optionToDelete) }
                                 call.respond(HttpStatusCode.OK)
                             }
 
                             "reset" -> {
-                                room.votes.update { mapOf() }
+                                room.votes.update { it.clear() }
                             }
                         }
                     }
@@ -124,7 +129,7 @@ fun Application.configureRouting() {
                 val session = call.principal<UserSession>() ?: return@post
                 val formParams = call.receiveParameters()
                 val option = formParams.getOrFail<Int>("option")
-                room.votes.update { it + (session.id to option) }
+                room.votes.update { it.put(session.id, option) }
                 call.respond(HttpStatusCode.OK)
             }
 
@@ -155,7 +160,7 @@ fun Application.configureRouting() {
                                 )
                             }
                         }
-                    }.collectLatest { result ->
+                    }.debounce(0.25.seconds).collectLatest { result ->
                         send(result, event = "chart")
                     }
                 }
