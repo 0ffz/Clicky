@@ -1,6 +1,7 @@
 package me.dvyy.me.dvyy.clicky.ui.pages
 
 
+import io.ktor.htmx.html.hx
 import kotlinx.html.*
 import me.dvyy.me.dvyy.clicky.ui.components.adminOptions
 import me.dvyy.me.dvyy.clicky.ui.components.barChart
@@ -17,9 +18,11 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: String) = defaultTemplate {
     }
 //        div("flex flex-col items-center justify-center gap-4") {
     div {
-        attributes["ws-connect"] = "/rooms/$room/live"
+//        attributes["ws-connect"] = "/rooms/$room/live"
+        attributes["sse-connect"] = "/rooms/$room/live"
         div("flex flex-col overflow-x-auto py-2") {
             if (isRoomOwner) div {
+                attributes["sse-swap"] = "chart"
                 id = "chart"
                 barChart(room, hidden = false, listOf())
             }
@@ -27,7 +30,8 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: String) = defaultTemplate {
         content {
             div {
                 id = "options"
-                voteOptions(listOf())
+                attributes["sse-swap"] = "options"
+                voteOptions(room, listOf())
             }
             if (isRoomOwner) {
                 details {

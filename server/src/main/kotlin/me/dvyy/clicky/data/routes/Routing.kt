@@ -1,8 +1,7 @@
 package me.dvyy.me.dvyy.clicky.data.routes
 
-import io.ktor.htmx.HxResponseHeaders
+import io.ktor.htmx.*
 import io.ktor.http.*
-import io.ktor.serialization.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.*
@@ -10,9 +9,8 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sse.*
 import io.ktor.server.util.*
-import io.ktor.server.websocket.*
-import io.ktor.websocket.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -22,7 +20,10 @@ import kotlinx.html.DIV
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.html.stream.appendHTML
-import me.dvyy.me.dvyy.clicky.data.*
+import me.dvyy.me.dvyy.clicky.data.UserSession
+import me.dvyy.me.dvyy.clicky.data.createRoom
+import me.dvyy.me.dvyy.clicky.data.ensureRoomOwner
+import me.dvyy.me.dvyy.clicky.data.getRoom
 import me.dvyy.me.dvyy.clicky.ui.components.barChart
 import me.dvyy.me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.me.dvyy.clicky.ui.pages.homePage
@@ -50,6 +51,7 @@ fun ApplicationCall.getRoomOrStop(): RoomViewModel {
 
 @OptIn(ExperimentalUuidApi::class)
 fun Application.configureRouting() {
+    install(SSE)
     routing {
         staticResources("/", "/web")
 
@@ -112,10 +114,19 @@ fun Application.configureRouting() {
 
             }
 
-            webSocket("/rooms/{room}/live") {
+            post("/rooms/{room}/vote") {
+                val room = call.getRoomOrStop()
+                val session = call.principal<UserSession>() ?: return@post
+                val formParams = call.receiveParameters()
+                val option = formParams.getOrFail<Int>("option")
+                room.votes.update { it + (session.id to option) }
+                call.respond(HttpStatusCode.OK)
+            }
+
+            sse("/rooms/{room}/live") {
                 val room = call.getRoomOrStop()
                 val session = call.principal<UserSession>()
-                    ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
+                    ?: return@sse close()//CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
                 val isOwner = room.admin == call.principal<UserSession>()?.id
                 println(session)
                 if (isOwner) launch {
@@ -136,32 +147,18 @@ fun Application.configureRouting() {
                             }
                         }
                     }.collectLatest { result ->
-                        send(result)
+                        send(result, event = "chart")
                     }
                 }
-                launch {
-                    room.options.collectLatest {
-                        send(buildString {
-                            appendHTML().div {
-                                id = "options"
-                                voteOptions(it)
-                            }
-                        })
-                    }
-                }
-                // receive
-                while (true) {
-                    val text = incoming.receive() as? Frame.Text ?: break
-                    println(text.readText())
-                    val selection = converter!!.deserialize<Selection>(text)
-                    println(selection)
-                    selection.apply {
-                        when {
-                            option != null -> room.votes.update { it + (session.id to option) }
+//                launch {
+                room.options.collectLatest {
+                    send(buildString {
+                        appendHTML().div {
+                            id = "options"
+                            voteOptions(room.code, it)
                         }
-                    }
+                    }, event = "options")
                 }
-//            close(CloseReason(CloseReason.Codes.NORMAL, "All done"))
             }
         }
     }

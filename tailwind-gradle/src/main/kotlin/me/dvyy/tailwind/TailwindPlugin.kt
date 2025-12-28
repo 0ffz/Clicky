@@ -87,27 +87,15 @@ abstract class GenerateTailwindCssTask : DefaultTask() {
     @get:InputDirectory
     abstract val watch: DirectoryProperty
 
-    // 2. Inject ExecOperations using an abstract getter
     @get:Inject
     abstract val execOperations: ExecOperations
 
     @TaskAction
     fun run() {
         execOperations.exec {
-            it.commandLine(
-                buildList {
-                    add(dest.pathString)
-                    val input = input.asFile.get().toPath().pathString
-                    if (input != null) addAll(listOf("-i", input))
-                    addAll(
-                        listOf(
-                            "-o",
-                            output.asFile.get().toPath().pathString,
-                            "--minify"
-                        )
-                    )
-                }
-            )
+            val input = input.asFile.get().toPath().pathString
+            val output = output.asFile.get().toPath().pathString
+            it.commandLine(listOf(dest.pathString, "-i", input, "-o", output, "--minify"))
         }
     }
 }
