@@ -45,14 +45,14 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplat
             if (isRoomOwner) div {
                 attributes["sse-swap"] = "chart"
                 id = "chart"
-                barChart(code, hidden = false, listOf())
+                barChart(code, hidden = false, room.options.value.map { it to 0 })
             }
         }
         content {
             div {
                 id = "options"
                 attributes["sse-swap"] = "options"
-                voteOptions(code, listOf())
+                voteOptions(code, room.options.value)
             }
             if (isRoomOwner) {
                 details {
@@ -60,7 +60,7 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplat
                     summary {
                         h2("inline-block") { +"Room options" }
                     }
-                    div {
+                    div("pb-16") {
                         id = "admin"
                         adminOptions(code)
                     }

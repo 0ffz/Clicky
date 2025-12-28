@@ -15,7 +15,7 @@ fun Routing.configureQRRouting() {
     route("/rooms/{room}") {
         get("qr.png") {
             val room = call.getRoomOrStop()
-            val qr = generateCode(room, Colors.BLACK, Colors.WHITE)
+            val qr = generateCode(room, Colors.BLACK, 0xf4f4f5)
             call.respondOutputStream(ContentType.Image.PNG) {
                 qr.render().writeImage(this)
             }

@@ -17,7 +17,7 @@ fun DIV.pageButton(exception: Exception?) {
             +"Room code:"
 
             div("flex gap-2") {
-                input(type = InputType.text, classes = "uppercase") {
+                input(type = InputType.text, classes = "uppercase text-3xl font-bold") {
                     id = "pageName"
                     required = true
                     name = "name"
@@ -30,25 +30,29 @@ fun DIV.pageButton(exception: Exception?) {
         }
         if (exception is RoomNotFoundException) errorBanner("Room not found: ${exception.roomId}")
     }
-    h2 { +"Create room" }
-    optionsForm {
-        attributes.hx {
-            post = "/create"
-            swap = "outerHTML"
-            target = "body"
+    details {
+        summary {
+            h2("inline-block") { +"Create room" }
         }
-        label {
-            +"Room name:"
+        optionsForm {
+            attributes.hx {
+                post = "/create"
+                swap = "outerHTML"
+                target = "body"
+            }
+            label {
+                +"Room name:"
 
-            div("flex gap-2") {
-                input(type = InputType.text) {
-                    id = "pageName"
-                    required = true
-                    name = "name"
-                }
+                div("flex gap-2") {
+                    input(type = InputType.text) {
+                        id = "pageName"
+                        required = true
+                        name = "name"
+                    }
 
-                submitInput(classes = "primary") {
-                    value = "Create"
+                    submitInput(classes = "primary") {
+                        value = "Create"
+                    }
                 }
             }
         }

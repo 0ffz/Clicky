@@ -23,7 +23,7 @@ fun FORM.radioButton(index: Int, name: String) {
             classes = """flex-shrink-0 appearance-none w-full h-16 rounded-md border-4 
             ${Colors.color(index)} ${Colors.border(index)}
             transition-transform duration-200 cursor-pointer 
-            checked:border-12 md:checked:border-8 checked:scale-103""".trimIndent()
+            checked:border-12 md:checked:border-8 checked:scale-105 md:checked:scale-103""".trimIndent()
         ) {
             id = "option$index"
             this.name = "option"

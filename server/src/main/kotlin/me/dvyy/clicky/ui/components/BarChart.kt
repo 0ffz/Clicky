@@ -15,14 +15,43 @@ import me.dvyy.shocky.icons.Icons
 
 object Colors {
     private val colors =
-        listOf("bg-red-500", "bg-amber-500", "bg-emerald-500", "bg-sky-500", "bg-blue-500", "bg-indigo-500")
+        listOf(
+            "bg-red-500",
+            "bg-amber-500",
+            "bg-emerald-500",
+            "bg-sky-500",
+            "bg-blue-500",
+            "bg-indigo-500",
+            "bg-fuchsia-500",
+            "bg-orange-500",
+            "bg-lime-500",
+            "bg-teal-500",
+            "bg-violet-500",
+            "bg-rose-500",
+            "bg-yellow-500",
+            "bg-green-500",
+            "bg-cyan-500",
+            "bg-purple-500",
+            "bg-pink-500",
+        )
     private val borders = listOf(
-        "border-red-600",
-        "border-amber-600",
-        "border-emerald-600",
-        "border-sky-600",
-        "border-blue-600",
-        "border-indigo-600"
+        "border-red-700",
+        "border-amber-700",
+        "border-emerald-700",
+        "border-sky-700",
+        "border-blue-700",
+        "border-indigo-700",
+        "border-fuchsia-700",
+        "border-orange-700",
+        "border-lime-700",
+        "border-teal-700",
+        "border-violet-700",
+        "border-rose-700",
+        "border-yellow-700",
+        "border-green-700",
+        "border-cyan-700",
+        "border-purple-700",
+        "border-pink-700",
     )
 
 
