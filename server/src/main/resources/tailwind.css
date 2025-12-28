@@ -20,11 +20,6 @@
         @apply dark:bg-zinc-800 dark:border-zinc-500;
     }
 
-    label {
-        @apply block;
-    }
-
-
     form {
         button[type="submit"],
         input[type="submit"],
@@ -38,7 +33,7 @@
     }
 
     .icon {
-        @apply w-4 h-4;
+        @apply inline-block shrink-0 align-text-top w-4 h-4;
     }
 }
 

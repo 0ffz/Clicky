@@ -1,5 +1,6 @@
-package me.dvyy.me.dvyy.clicky.data
+package me.dvyy.me.dvyy.clicky.data.routes
 
+import io.ktor.htmx.HxResponseHeaders
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.server.application.*
@@ -21,6 +22,7 @@ import kotlinx.html.DIV
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.html.stream.appendHTML
+import me.dvyy.me.dvyy.clicky.data.*
 import me.dvyy.me.dvyy.clicky.ui.components.barChart
 import me.dvyy.me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.me.dvyy.clicky.ui.pages.homePage
@@ -30,13 +32,20 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class RoomViewModel(
-    name: String,
+    val name: String,
+    val code: String,
     val admin: Uuid,
 ) {
-    val name = MutableStateFlow(name)
     val votes = MutableStateFlow(mapOf<Uuid, Int>())
     val options = MutableStateFlow(listOf("A", "B", "C"))
     val hidden = MutableStateFlow(false)
+}
+
+class RoomNotFoundException(val roomId: String) : Exception()
+
+fun ApplicationCall.getRoomOrStop(): RoomViewModel {
+    val roomId = parameters.getOrFail<String>("room")
+    return getRoom(roomId) ?: throw RoomNotFoundException(roomId)
 }
 
 @OptIn(ExperimentalUuidApi::class)
@@ -44,34 +53,39 @@ fun Application.configureRouting() {
     routing {
         staticResources("/", "/web")
 
-        get("/") {
-            call.respondHtml {
-                homePage()
-            }
-        }
         authenticate("session") {
+            get("/") {
+                call.respondHtml {
+                    homePage()
+                }
+            }
+
+            post("/create") {
+                val roomId = call.receiveParameters().getOrFail<String>("name").uppercase()
+                val session = call.principal<UserSession>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
+                val room = createRoom(roomId, session.id) ?: return@post call.respond(HttpStatusCode.Conflict)
+                call.respondRedirect("/rooms/${room.code}")
+            }
             route("/rooms") {
                 post {
-                    val roomId = call.receiveParameters().getOrFail<String>("name")
-                    val session = call.principal<UserSession>() ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                    createRoom(roomId, session.id)
+                    val roomId = call.receiveParameters().getOrFail<String>("name").uppercase()
+                    val exists = getRoom(roomId) != null
                     call.respondRedirect("/rooms/$roomId")
                 }
 
                 get("/{room}") {
-                    val roomId = call.parameters.getOrFail<String>("room")
-                    val room = getRoom(roomId)
+                    val room = call.getRoomOrStop()
                     val isOwner = room.admin == call.principal<UserSession>()?.id
+                    call.response.headers.append(HxResponseHeaders.PushUrl, "/rooms/${room.code}")
                     call.respondHtml {
-                        resultsPage(isOwner, roomId)
+                        resultsPage(isOwner, room.code)
                     }
                 }
                 post("/{room}/admin") {
                     ensureRoomOwner(call) {
-                        val roomId = call.parameters.getOrFail<String>("room")
+                        val room = call.getRoomOrStop()
                         val formParams = call.receiveParameters()
                         val action = formParams.getOrFail<String>("action")
-                        val room = getRoom(roomId)
                         when (action) {
                             "add" -> {
                                 val newOption = formParams.getOrFail<String>("option")
@@ -84,8 +98,8 @@ fun Application.configureRouting() {
                             }
 
                             "delete" -> {
-                                val optionToDelete = formParams.getOrFail<String>("option")
-                                room.options.update { it - optionToDelete }
+                                val optionToDelete = formParams.getOrFail<Int>("option")
+                                room.options.update { it.filterIndexed { index, _ -> index != optionToDelete } }
                                 call.respond(HttpStatusCode.OK)
                             }
 
@@ -99,12 +113,12 @@ fun Application.configureRouting() {
             }
 
             webSocket("/rooms/{room}/live") {
-                val roomId = call.parameters.getOrFail<String>("room")
+                val room = call.getRoomOrStop()
                 val session = call.principal<UserSession>()
                     ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
-                val room = getRoom(roomId)
+                val isOwner = room.admin == call.principal<UserSession>()?.id
                 println(session)
-                launch {
+                if (isOwner) launch {
                     combine(
                         room.hidden,
                         room.votes,
@@ -115,9 +129,10 @@ fun Application.configureRouting() {
                             appendHTML().div {
                                 id = "chart"
                                 barChart(
-                                    roomId,
+                                    room.code,
                                     hidden,
-                                    options.mapIndexed { index, string -> string to (counts[index] ?: 0) })
+                                    options.mapIndexed { index, string -> string to (counts[index] ?: 0) }
+                                )
                             }
                         }
                     }.collectLatest { result ->
@@ -129,7 +144,7 @@ fun Application.configureRouting() {
                         send(buildString {
                             appendHTML().div {
                                 id = "options"
-                                voteOptions(it.count())
+                                voteOptions(it)
                             }
                         })
                     }

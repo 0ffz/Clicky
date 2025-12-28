@@ -9,27 +9,37 @@ import me.dvyy.me.dvyy.clicky.ui.templates.defaultTemplate
 
 fun HTML.resultsPage(isRoomOwner: Boolean, room: String) = defaultTemplate {
     content {
-        h1("mb-0") { +"Room $room" }
+        h1("mb-0") {
+            +"Room: "
+            span("font-mono") { +room }
+        }
         a(href = "/") { span { +"< Back" } }
     }
 //        div("flex flex-col items-center justify-center gap-4") {
     div {
         attributes["ws-connect"] = "/rooms/$room/live"
-        div("flex flex-col overflow-x-auto") {
+        div("flex flex-col overflow-x-auto py-2") {
             if (isRoomOwner) div {
                 id = "chart"
                 barChart(room, hidden = false, listOf())
             }
-            div {
-                id = "options"
-                voteOptions(0)
-            }
         }
         content {
-            h2 { +"Room options" }
-            if (isRoomOwner) div {
-                id = "admin"
-                adminOptions(room)
+            div {
+                id = "options"
+                voteOptions(listOf())
+            }
+            if (isRoomOwner) {
+                details {
+                    open = true
+                    summary {
+                        h2("inline-block") { +"Room options" }
+                    }
+                    div {
+                        id = "admin"
+                        adminOptions(room)
+                    }
+                }
             }
         }
     }

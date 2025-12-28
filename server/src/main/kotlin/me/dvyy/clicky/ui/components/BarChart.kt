@@ -31,14 +31,14 @@ object Colors {
 }
 
 fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, Int>>) {
-    div("flex md:justify-center gap-4 p-4 h-64") {
+    div("grid grid-flow-col auto-cols-min grid-rows-[auto_1fr] gap-x-4 md:justify-center") {
         if (hidden) return@div
         val max = map.maxByOrNull { it.second }?.second ?: 1
         map.forEachIndexed { index, (column, value) ->
-            div("flex flex-col items-center gap-2 h-full") {
-                div("flex-1 flex items-end") {
+            div("grid grid-rows-[subgrid] row-span-2 items-center gap-2  w-20") {
+                div("flex-1 flex items-end justify-center h-64") {
                     val percentage = if (max > 0) (value.toDouble() / max * 100).toInt() else 0
-                    div("${Colors.color(index)} ${Colors.border(index)} border-4 w-16 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
+                    div("${Colors.color(index)} ${Colors.border(index)} border-4 w-20 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
                         id = "bar-$index"
                         style = "height: ${percentage}%"
                         if (percentage > 10) {
@@ -46,12 +46,12 @@ fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, I
                         }
                     }
                 }
-                div("text-sm font-medium flex items-center gap-1") {
-                    span { +column }
+                div("text-sm text-center font-medium items-start h-full gap-1") {
+                    span("break-words wrap-anywhere min-w-0 text-ellipsis") { +column }
                     button {
                         attributes.hx {
                             post = "/rooms/$room/admin"
-                            vals = """{ "action": "delete", "option": "$column" }"""
+                            vals = """{ "action": "delete", "option": "$index" }"""
                         }
                         icon("trash", "demphasized")
                     }

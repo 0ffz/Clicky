@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.sessions)
+    implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.auth.jwt)
     implementation(libs.ktor.server.websockets)
@@ -46,6 +47,7 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+    implementation("org.sqids:sqids-kotlin:0.1.1")
     implementation("me.dvyy:shocky-icons:0.3.0-dev.6")
 }
 
