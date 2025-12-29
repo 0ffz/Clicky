@@ -11,6 +11,7 @@ fun FlowContent.voteOptions(
     attributes["sse-swap"] = "options"
 
     form(classes = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:justify-center p-4 gap-2") {
+        id = "optionsForm"
         attributes.hx {
             post = "/room/$room/vote"
             swap = "none"
@@ -19,6 +20,9 @@ fun FlowContent.voteOptions(
         options.forEachIndexed { index, name ->
             radioButton(index, name)
         }
+    }
+    form(classes = "px-4") {
+        deselectButton(room)
     }
 }
 
@@ -36,5 +40,17 @@ fun FORM.radioButton(index: Int, name: String) {
             this.value = "$index"
         }
 
+    }
+}
+
+fun FlowContent.deselectButton(code: String) {
+    button(classes = "outlined max-md:mt-2") {
+        attributes.hx {
+            post = "/room/$code/vote"
+            swap = "none"
+            on["click"] = "document.getElementById('optionsForm').reset()"
+            vals = """{ "option": "-1" }"""
+        }
+        +"Deselect"
     }
 }

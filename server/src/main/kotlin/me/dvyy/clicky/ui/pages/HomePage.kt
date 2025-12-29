@@ -10,7 +10,6 @@ import me.dvyy.clicky.ui.templates.defaultTemplate
 
 fun HTML.homePage(
     exception: Exception? = null,
-    message: String? = null,
 ) = defaultTemplate {
     centeredContent {
         h1 {

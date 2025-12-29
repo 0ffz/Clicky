@@ -4,7 +4,7 @@ import io.ktor.htmx.html.*
 import kotlinx.html.*
 
 fun FlowContent.adminOptions(room: String) {
-    optionsForm {
+    form(classes = "px-4") {
         attributes.hx {
             post = "/room/$room/admin"
             vals = """{ "action": "add" }"""
@@ -44,11 +44,5 @@ fun FlowContent.adminOptions(room: String) {
                 +"Close"
             }
         }
-    }
-}
-
-fun FlowContent.optionsForm(content: FORM.() -> Unit) {
-    form {
-        content()
     }
 }

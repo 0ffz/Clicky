@@ -17,7 +17,7 @@ fun HTML.defaultTemplate(body: MAIN.() -> Unit) {
         attributes.hx {
             ext = "sse"
         }
-        main("py-8 prose prose-zinc dark:prose-invert max-w-none prose-h2:mb-2 prose-h2:mt-4") {
+        main("py-8 prose prose-zinc dark:prose-invert max-w-none prose-h2:mb-2 prose-h2:mt-6") {
             body.invoke(this)
         }
         siteFooter()

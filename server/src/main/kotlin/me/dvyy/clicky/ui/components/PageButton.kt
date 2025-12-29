@@ -7,7 +7,7 @@ import me.dvyy.clicky.ui.pages.errorBanner
 
 fun DIV.pageButton(exception: Exception?) {
     h2 { +"Join room" }
-    optionsForm {
+    form {
         attributes.hx {
             get = "/room"
             swap = "outerHTML"
@@ -15,14 +15,16 @@ fun DIV.pageButton(exception: Exception?) {
         }
         label {
             +"Room code:"
-            div("flex gap-2") {
-                input(type = InputType.text, classes = "uppercase text-3xl font-bold") {
+            div("flex flex-wrap gap-2") {
+                input(type = InputType.text, classes = "uppercase text-3xl font-bold flex-1 max-sm:w-full") {
                     id = "pageName"
                     required = true
                     name = "name"
+
+                    if(exception is RoomNotFoundException) value = exception.roomCode
                 }
 
-                submitInput(classes = "primary") {
+                submitInput(classes = "primary max-sm:w-full") {
                     value = "Enter"
                 }
             }
@@ -33,7 +35,7 @@ fun DIV.pageButton(exception: Exception?) {
         summary {
             h2("inline-block") { +"Create room" }
         }
-        optionsForm {
+        form {
             attributes.hx {
                 post = "/room"
                 swap = "outerHTML"
@@ -42,14 +44,14 @@ fun DIV.pageButton(exception: Exception?) {
             label {
                 +"Room name:"
 
-                div("flex gap-2") {
-                    input(type = InputType.text) {
+                div("flex flex-wrap gap-2") {
+                    input(type = InputType.text, classes = "flex-1 max-sm:w-full") {
                         id = "pageName"
                         required = true
                         name = "name"
                     }
 
-                    submitInput(classes = "primary") {
+                    submitInput(classes = "max-sm:w-full") {
                         value = "Create"
                     }
                 }
