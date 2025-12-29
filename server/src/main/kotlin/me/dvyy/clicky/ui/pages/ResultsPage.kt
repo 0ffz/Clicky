@@ -14,7 +14,7 @@ import me.dvyy.clicky.ui.templates.defaultTemplate
 fun HTML.resultsPage(
     isRoomOwner: Boolean,
     room: RoomViewModel,
-) = defaultTemplate {
+) = defaultTemplate(title = "Clicky - " + room.name) {
     val code = room.code
     centeredContent {
         div("flex items-start justify-between gap-4") {

@@ -4,12 +4,15 @@ import io.ktor.htmx.html.*
 import kotlinx.html.*
 import me.dvyy.clicky.ui.components.siteFooter
 
-fun HTML.defaultTemplate(body: MAIN.() -> Unit) {
+fun HTML.defaultTemplate(title: String? = null, body: MAIN.() -> Unit) {
     head {
         meta(charset = "utf-8")
         meta(name = "viewport", content = "width=device-width, initial-scale=1.0")
+        link(rel = "icon", href = "/icon.svg", type = "image/svg+xml")
         script { src = "/scripts/htmx.min.js" }
         script { src = "/scripts/htmx-ext-sse.js" }
+        title { +(title ?: "Clicky") }
+
         link(rel = LinkRel.stylesheet, href = "/styles/style.css")
     }
 
