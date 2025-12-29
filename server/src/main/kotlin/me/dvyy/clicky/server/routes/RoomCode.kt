@@ -10,18 +10,11 @@ import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.server.util.*
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.html.div
 import kotlinx.html.html
-import kotlinx.html.id
 import kotlinx.html.stream.appendHTML
 import me.dvyy.clicky.server.data.*
 import me.dvyy.clicky.server.data.exceptions.RoomNotFoundException
-import me.dvyy.clicky.ui.components.barChart
-import me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.clicky.ui.pages.homePage
 import me.dvyy.clicky.ui.pages.resultsPage
 
@@ -30,7 +23,8 @@ context(clicky: Clicky)
 fun Route.roomCodeRoutes() = route("/{room}") {
     get {
         val room = call.getRoomOrStop()
-        val isOwner = room.admin == call.principal<UserSession>()?.id
+        val id = call.principal<UserSession>()?.id ?: return@get
+        val isOwner = room.admin == id
         call.response.headers.append(HxResponseHeaders.PushUrl, "/room/${room.code}")
         call.respondHtml {
             resultsPage(isOwner, room)
@@ -74,6 +68,10 @@ fun Route.roomCodeRoutes() = route("/{room}") {
                     room.clearVotes()
                     call.respond(HttpStatusCode.OK)
                 }
+
+                "close" -> {
+                    clicky.rooms.close(room)
+                }
             }
         }
     }
@@ -93,35 +91,12 @@ fun Route.roomCodeRoutes() = route("/{room}") {
         val isOwner = room.admin == call.principal<UserSession>()?.id
 
         if (isOwner) launch {
-            combine(
-                room.hidden,
-                room.votes,
-                room.options
-            ) { hidden, votes, options ->
-                val counts = votes.entries.groupingBy { it.value }.eachCount()
-                buildString {
-                    appendHTML().div {
-                        id = "chart"
-                        barChart(
-                            room.code,
-                            hidden,
-                            options.mapIndexed { index, string -> string to (counts[index] ?: 0) }
-                        )
-                    }
-                }
-            }.debounce(clicky.config.chartUpdateInterval).collectLatest { result ->
-                send(result, event = "chart")
+            room.renderedChart.collect {
+                send(it, event = "chart")
             }
         }
         launch {
-            combine(room.reset, room.options) { _, options -> options }.collectLatest {
-                send(buildString {
-                    appendHTML().div {
-                        id = "options"
-                        voteOptions(room.code, it)
-                    }
-                }, event = "options")
-            }
+            room.renderedVotes.collect { send(it.first, event = "options") }
         }
         room.awaitClose()
         sendRoomClosed()

@@ -6,13 +6,17 @@ import kotlinx.html.*
 import me.dvyy.clicky.server.data.RoomViewModel
 import me.dvyy.clicky.ui.components.adminOptions
 import me.dvyy.clicky.ui.components.barChart
+import me.dvyy.clicky.ui.components.centeredContent
 import me.dvyy.clicky.ui.components.qrCode
 import me.dvyy.clicky.ui.components.voteOptions
 import me.dvyy.clicky.ui.templates.defaultTemplate
 
-fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplate {
+fun HTML.resultsPage(
+    isRoomOwner: Boolean,
+    room: RoomViewModel,
+) = defaultTemplate {
     val code = room.code
-    content {
+    centeredContent {
         div("flex items-start justify-between gap-4") {
             div("flex-1") {
                 h1("mb-0 mt-2 text-5xl") {
@@ -41,37 +45,19 @@ fun HTML.resultsPage(isRoomOwner: Boolean, room: RoomViewModel) = defaultTemplat
             }
         }
         div("flex flex-col overflow-x-auto py-2") {
-            if (isRoomOwner) div {
-                attributes["sse-swap"] = "chart"
-                id = "chart"
-                barChart(code, hidden = false, room.options.value.map { it to 0 })
-            }
+            if (isRoomOwner) barChart(code, hidden = false, room.options.value.map { it to 0 })
         }
-        content {
-            div {
-                id = "options"
-                attributes["sse-swap"] = "options"
-                voteOptions(code, room.options.value)
-            }
+        centeredContent {
+            voteOptions(code, room.options.value)
             if (isRoomOwner) {
                 details {
                     open = true
                     summary {
                         h2("inline-block") { +"Room options" }
                     }
-                    div("pb-16") {
-                        id = "admin"
-                        adminOptions(code)
-                    }
+                    adminOptions(code)
                 }
             }
         }
-    }
-}
-
-
-fun FlowContent.content(block: DIV.() -> Unit) {
-    div("mx-auto max-w-4xl px-4 lg:px-0") {
-        block()
     }
 }

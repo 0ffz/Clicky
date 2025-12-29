@@ -15,7 +15,6 @@ fun DIV.pageButton(exception: Exception?) {
         }
         label {
             +"Room code:"
-
             div("flex gap-2") {
                 input(type = InputType.text, classes = "uppercase text-3xl font-bold") {
                     id = "pageName"

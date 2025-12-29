@@ -4,6 +4,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.HTML
 import kotlinx.html.div
 import kotlinx.html.h1
+import me.dvyy.clicky.ui.components.centeredContent
 import me.dvyy.clicky.ui.components.pageButton
 import me.dvyy.clicky.ui.templates.defaultTemplate
 
@@ -11,7 +12,7 @@ fun HTML.homePage(
     exception: Exception? = null,
     message: String? = null,
 ) = defaultTemplate {
-    content {
+    centeredContent {
         h1 {
             +"Clicky"
         }

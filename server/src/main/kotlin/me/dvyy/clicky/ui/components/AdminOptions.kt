@@ -25,13 +25,24 @@ fun FlowContent.adminOptions(room: String) {
                 }
             }
         }
-        button {
-            id = "resetButton"
-            attributes.hx {
-                post = "/room/$room/admin"
-                vals = """{ "action": "reset" }"""
+        div("flex flex-wrap gap-4 sm:gap-2") {
+            button(classes="max-sm:w-full") {
+                id = "resetButton"
+                attributes.hx {
+                    post = "/room/$room/admin"
+                    vals = """{ "action": "reset" }"""
+                }
+                +"Reset votes"
             }
-            +"Reset"
+            button(classes = "error max-sm:w-full") {
+                id = "closeButton"
+
+                attributes.hx {
+                    post = "/room/$room/admin"
+                    vals = """{ "action": "close" }"""
+                }
+                +"Close"
+            }
         }
     }
 }

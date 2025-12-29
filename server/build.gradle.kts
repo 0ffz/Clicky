@@ -4,6 +4,8 @@ import me.dvyy.tailwind.InstallTailwindCssTask
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.plugin.serialization)
     id("me.dvyy.tailwind")
 }
@@ -14,6 +16,7 @@ application {
 
 repositories {
     mavenCentral()
+    google()
     maven("https://repo.mineinabyss.com/releases")
     maven("https://repo.mineinabyss.com/snapshots")
 }
@@ -34,6 +37,8 @@ dependencies {
     implementation(libs.shocky.icons)
     implementation(libs.qrcode)
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
+    implementation(compose.runtime)
+    implementation("app.cash.molecule:molecule-runtime:2.2.0")
 
 
     // Ktor

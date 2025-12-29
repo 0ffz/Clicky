@@ -2,6 +2,7 @@ package me.dvyy.clicky.ui.templates
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
+import me.dvyy.clicky.ui.components.siteFooter
 
 fun HTML.defaultTemplate(body: MAIN.() -> Unit) {
     head {
@@ -12,12 +13,13 @@ fun HTML.defaultTemplate(body: MAIN.() -> Unit) {
         link(rel = LinkRel.stylesheet, href = "/styles/style.css")
     }
 
-    body("bg-zinc-100 dark:bg-zinc-900 min-h-screen overflow-x-hidden") {
+    body("bg-zinc-100 dark:bg-zinc-900 h-screen mb-auto flex flex-col justify-between overflow-x-hidden") {
         attributes.hx {
             ext = "sse"
         }
-        main("min-h-screen py-8 prose prose-zinc dark:prose-invert max-w-none") {
+        main("py-8 prose prose-zinc dark:prose-invert max-w-none prose-h2:mb-2 prose-h2:mt-4") {
             body.invoke(this)
         }
+        siteFooter()
     }
 }

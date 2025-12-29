@@ -64,32 +64,32 @@ object Colors {
     }
 }
 
-fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, Int>>) {
-    div("wrapper") {
-        div("grid grid-flow-col auto-cols-min grid-rows-[auto_1fr] gap-x-4 px-4") {
-            if (hidden) return@div
-            val max = map.maxByOrNull { it.second }?.second ?: 1
-            map.forEachIndexed { index, (column, value) ->
-                div("grid grid-rows-[subgrid] row-span-2 items-center gap-2 w-20") {
-                    div("flex-1 flex items-end justify-center h-64") {
-                        val percentage = if (max > 0) (value.toDouble() / max * 100).toInt() else 0
-                        div("${Colors.color(index)} ${Colors.border(index)} border-4 w-20 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
-                            id = "bar-$index"
-                            style = "height: ${percentage}%"
-                            if (percentage > 10) {
-                                +value.toString()
-                            }
+fun FlowContent.barChart(room: String, hidden: Boolean, map: List<Pair<String, Int>>) = div("wrapper") {
+    attributes["sse-swap"] = "chart"
+    id = "chart"
+    div("grid grid-flow-col auto-cols-min grid-rows-[auto_1fr] gap-x-4 px-4") {
+        if (hidden) return@div
+        val max = map.maxByOrNull { it.second }?.second ?: 1
+        map.forEachIndexed { index, (column, value) ->
+            div("grid grid-rows-[subgrid] row-span-2 items-center gap-2 w-20") {
+                div("flex-1 flex items-end justify-center h-64") {
+                    val percentage = if (max > 0) (value.toDouble() / max * 100).toInt() else 0
+                    div("${Colors.color(index)} ${Colors.border(index)} border-4 w-20 rounded-t-lg flex flex-col items-center justify-start pt-2 text-xs text-white font-semibold transition-all duration-300") {
+                        id = "bar-$index"
+                        style = "height: ${percentage}%"
+                        if (percentage > 10) {
+                            +value.toString()
                         }
                     }
-                    div("text-sm text-center font-medium items-start h-full gap-1") {
-                        span("break-words wrap-anywhere min-w-0 text-ellipsis") { +column }
-                        button {
-                            attributes.hx {
-                                post = "/room/$room/admin"
-                                vals = """{ "action": "delete", "option": "$index" }"""
-                            }
-                            icon("trash", "demphasized")
+                }
+                div("text-sm text-center font-medium items-start h-full gap-1") {
+                    span("break-words wrap-anywhere min-w-0 text-ellipsis") { +column }
+                    button {
+                        attributes.hx {
+                            post = "/room/$room/admin"
+                            vals = """{ "action": "delete", "option": "$index" }"""
                         }
+                        icon("trash", "demphasized")
                     }
                 }
             }

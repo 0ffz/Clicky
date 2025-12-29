@@ -12,7 +12,7 @@ import kotlin.uuid.Uuid
 
 class RoomRepository(
     private val logger: Logger,
-    config: ClickyConfig,
+    private val config: ClickyConfig,
 ) {
     private val rooms = Caffeine.newBuilder()
         .expireAfterAccess(config.inactiveRoomTimeout.toJavaDuration())
@@ -32,10 +32,12 @@ class RoomRepository(
 
     operator fun get(room: String) = rooms.getIfPresent(room)
 
+    fun close(room: RoomViewModel) = rooms.invalidate(room.code)
+
     @OptIn(ExperimentalAtomicApi::class)
     fun create(name: String, admin: Uuid): RoomViewModel {
         val code = sqids.encode(listOf(counter.fetchAndIncrement(), random.nextLong(1024)))
-        val room = RoomViewModel(name = name, code = code, admin = admin)
+        val room = RoomViewModel(name = name, code = code, config = config, admin = admin)
         rooms.put(code, room)
         logger.info("Created room ${room.code}")
         return room
