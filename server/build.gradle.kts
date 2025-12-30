@@ -69,11 +69,6 @@ ktor {
     docker {
         jreVersion = JavaVersion.VERSION_25
         localImageName = "ghcr.io/0ffz/clicky"
-        externalRegistry = io.ktor.plugin.features.DockerImageRegistry.externalRegistry(
-            username = providers.environmentVariable("DOCKER_USERNAME"),
-            password = providers.environmentVariable("DOCKER_PASSWORD"),
-            project = providers.environmentVariable("DOCKER_PROJECT")
-        )
     }
 }
 
