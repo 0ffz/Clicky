@@ -38,6 +38,6 @@ jobs:
       - name: Build
         run: ./gradlew publishImage
         env:
-          DOCKER_PROJECT: ${{ env.REGISTRY }}/${{ github.repository }}
+          DOCKER_PROJECT: ${{ env.REGISTRY }}/0ffz/clicky
           DOCKER_USERNAME: ${{ github.actor }}
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
