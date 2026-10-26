@@ -66,7 +66,18 @@ dependencies {
 ktor {
     docker {
         jreVersion = JavaVersion.VERSION_25
+        // Distroless has no shell or package manager, limiting what an attacker can do with RCE
+        customBaseImage = "gcr.io/distroless/java25-debian13:nonroot"
         localImageName = "ghcr.io/0ffz/clicky"
+    }
+}
+
+jib {
+    container {
+        // distroless "nonroot" user
+        user = "65532:65532"
+        // Avoid writing perf data to /tmp so the container can run with a read-only filesystem
+        jvmFlags = listOf("-XX:-UsePerfData")
     }
 }
 

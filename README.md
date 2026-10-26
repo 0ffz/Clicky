@@ -34,9 +34,20 @@ services:
       # SITE_RATE_LIMIT_NEW_SESSIONS_PER_IP: 400
       # SITE_RATE_LIMIT_ROOMS_PER_IP: 30
       # SITE_INACTIVE_ROOM_TIMEOUT: 24
+    # Security hardening, Clicky never writes to disk and doesn't need root
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m # Netty extracts its native transport library here
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 512
+    mem_limit: 1g
 ```
 
-To get HTTPS encryption on your website, use a reverse proxy such as traefik, caddy, or nginx.
+The image is based on [distroless](https://github.com/GoogleContainerTools/distroless) and runs as a non-root user (`65532`) by default. The options above additionally make the filesystem read-only, drop all Linux capabilities, prevent privilege escalation, and cap process count and memory. Adjust `mem_limit` to your expected audience size.
+
+To get HTTPS encryption on your website, use a reverse proxy such as traefik, caddy, or nginx. You should set `SITE_TRUST_PROXY_HEADERS: "true"` in such cases to correctly pass through the original IPs as headers.
 
 # Development
 
