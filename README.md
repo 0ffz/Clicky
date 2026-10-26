@@ -27,7 +27,12 @@ services:
       # Root URL of the site, used for QR codes
       SITE_URL: "https://example.com"
       # SITE_CHART_UPDATE_INTERVAL: 0.2
-      # SITE_RATE_LIMIT: 100
+      # SITE_TRUST_PROXY_HEADERS: false
+      # SITE_MAX_ROOMS: 5000
+      # SITE_RATE_LIMIT_PER_IP: 2000
+      # SITE_RATE_LIMIT_PER_SESSION: 60
+      # SITE_RATE_LIMIT_NEW_SESSIONS_PER_IP: 400
+      # SITE_RATE_LIMIT_ROOMS_PER_IP: 30
       # SITE_INACTIVE_ROOM_TIMEOUT: 24
 ```
 

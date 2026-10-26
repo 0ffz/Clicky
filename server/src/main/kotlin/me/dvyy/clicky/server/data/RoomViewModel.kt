@@ -4,6 +4,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentHashMapOf
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
@@ -75,6 +76,13 @@ class RoomViewModel(
 
     fun removeOption(index: Int) {
         _options.update { it.removeAt(index) }
+        // Shift votes so they keep pointing at the same option
+        _votes.update { votes ->
+            votes.mutate { map ->
+                map.entries.removeIf { it.value == index }
+                map.replaceAll { _, option -> if (option > index) option - 1 else option }
+            }
+        }
     }
 
     fun toggleHidden() {

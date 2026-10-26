@@ -10,6 +10,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() = with(Clicky(this)) {
+    configureForwardedHeaders()
+    configureRequestLimits()
     configureSerialization()
     configureSecurity()
     configureSSE()

@@ -2,6 +2,7 @@ package me.dvyy.clicky.ui.components
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
+import me.dvyy.clicky.server.data.Limits
 import me.dvyy.clicky.server.data.exceptions.RoomNotFoundException
 import me.dvyy.clicky.ui.pages.errorBanner
 
@@ -49,6 +50,7 @@ fun DIV.pageButton(exception: Exception?) {
                         id = "pageName"
                         required = true
                         name = "name"
+                        maxLength = Limits.MAX_ROOM_NAME_LENGTH.toString()
                     }
 
                     submitInput(classes = "max-sm:w-full") {

@@ -7,8 +7,20 @@ ktor:
 site:
   # Root URL of the site, used for QR code
   url: ${SITE_URL:http://localhost:8080}
-  # Global rate limit for all users, in requests per 10 seconds.
-  rate_limit: ${SITE_RATE_LIMIT:100}
+  # Set to true only when running behind a reverse proxy, client IPs are then read from X-Forwarded-For.
+  trust_proxy_headers: ${SITE_TRUST_PROXY_HEADERS:false}
+  # Maximum number of open rooms, new rooms are rejected past this.
+  max_rooms: ${SITE_MAX_ROOMS:5000}
+  # Rate limits, set any to 0 or less to disable it. Many students may share one IP, so per-IP limits are generous.
+  rate_limit:
+    # Requests per 10 seconds from one IP, applies to everything including static files.
+    per_ip: ${SITE_RATE_LIMIT_PER_IP:2000}
+    # Requests per 10 seconds from one user session.
+    per_session: ${SITE_RATE_LIMIT_PER_SESSION:60}
+    # Requests per minute from one IP without a session (i.e. users joining for the first time.)
+    new_sessions_per_ip: ${SITE_RATE_LIMIT_NEW_SESSIONS_PER_IP:400}
+    # Rooms created per hour from one IP.
+    rooms_per_ip: ${SITE_RATE_LIMIT_ROOMS_PER_IP:30}
   chart:
     # Debounce time for chart updates in seconds (0 or less to disable.)
     update_interval: ${SITE_CHART_UPDATE_INTERVAL:0.2}

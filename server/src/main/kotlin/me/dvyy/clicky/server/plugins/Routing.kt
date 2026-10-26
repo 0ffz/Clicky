@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.*
 import io.ktor.server.http.content.*
+import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.routing.*
 import me.dvyy.clicky.server.data.Clicky
 import me.dvyy.clicky.server.routes.roomRoutes
@@ -14,13 +15,15 @@ fun Application.configureRouting() {
     routing {
         staticResources("/", "/web")
 
-        authenticate("session") {
-            get("/") {
-                call.respondHtml {
-                    homePage()
+        rateLimit(SessionRateLimit) {
+            authenticate("session") {
+                get("/") {
+                    call.respondHtml {
+                        homePage()
+                    }
                 }
+                roomRoutes()
             }
-            roomRoutes()
         }
     }
 }

@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.ktor.server.netty)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.ktor.server.caching.headers)
+    implementation(libs.ktor.server.forwarded.header)
 
     // Tests
     testImplementation(libs.ktor.server.test.host)

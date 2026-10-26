@@ -2,6 +2,7 @@ package me.dvyy.clicky.ui.components
 
 import io.ktor.htmx.html.*
 import kotlinx.html.*
+import me.dvyy.clicky.server.data.Limits
 
 fun FlowContent.adminOptions(room: String) {
     form(classes = "px-4") {
@@ -19,6 +20,7 @@ fun FlowContent.adminOptions(room: String) {
                     id = "option"
                     required = true
                     name = "option"
+                    maxLength = Limits.MAX_OPTION_LENGTH.toString()
                 }
                 submitInput(classes = "primary") {
                     value = "Add"

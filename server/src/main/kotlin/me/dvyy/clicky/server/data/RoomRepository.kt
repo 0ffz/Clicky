@@ -2,6 +2,7 @@ package me.dvyy.clicky.server.data
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.ktor.util.logging.*
+import me.dvyy.clicky.server.data.exceptions.TooManyRoomsException
 import org.sqids.Sqids
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -36,6 +37,7 @@ class RoomRepository(
 
     @OptIn(ExperimentalAtomicApi::class)
     fun create(name: String, admin: Uuid): RoomViewModel {
+        if (rooms.estimatedSize() >= config.maxRooms) throw TooManyRoomsException()
         val code = sqids.encode(listOf(counter.fetchAndIncrement(), random.nextLong(1024)))
         val room = RoomViewModel(name = name, code = code, config = config, admin = admin)
         rooms.put(code, room)

@@ -4,6 +4,7 @@ import io.ktor.htmx.*
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -38,6 +39,8 @@ fun Route.roomCodeRoutes() = route("/{room}") {
         val session = call.principal<UserSession>() ?: return@post
         val formParams = call.receiveParameters()
         val option = formParams.getOrFail<Int>("option")
+        // -1 deselects
+        if (option !in -1..room.options.value.lastIndex) throw BadRequestException("Invalid option")
         room.vote(session.id, option)
         call.respond(HttpStatusCode.OK)
 
@@ -50,16 +53,15 @@ fun Route.roomCodeRoutes() = route("/{room}") {
             when (action) {
                 "add" -> {
                     val newOption = formParams.getOrFail<String>("option")
-                    if (newOption != "") {
-                        room.addOption(newOption)
-                        call.respond(HttpStatusCode.OK)
-                    } else {
-                        call.respond(HttpStatusCode.BadRequest)
-                    }
+                    if (newOption.isEmpty() || newOption.length > Limits.MAX_OPTION_LENGTH) throw BadRequestException("Invalid option")
+                    if (room.options.value.size >= Limits.MAX_OPTIONS) throw BadRequestException("Too many options")
+                    room.addOption(newOption)
+                    call.respond(HttpStatusCode.OK)
                 }
 
                 "delete" -> {
                     val optionToDelete = formParams.getOrFail<Int>("option")
+                    if (optionToDelete !in room.options.value.indices) throw BadRequestException("Invalid option")
                     room.removeOption(optionToDelete)
                     call.respond(HttpStatusCode.OK)
                 }
@@ -87,18 +89,23 @@ fun Route.roomCodeRoutes() = route("/{room}") {
         }
 
         val room = call.getRoomOrNull() ?: return@sse sendRoomClosed()
-        call.principal<UserSession>() ?: return@sse close()
-        val isOwner = room.admin == call.principal<UserSession>()?.id
+        val session = call.principal<UserSession>() ?: return@sse close()
+        if (!clicky.liveConnections.tryAcquire(session.id)) return@sse close()
+        try {
+            val isOwner = room.admin == session.id
 
-        if (isOwner) launch {
-            room.renderedChart.collect {
-                send(it, event = "chart")
+            if (isOwner) launch {
+                room.renderedChart.collect {
+                    send(it, event = "chart")
+                }
             }
+            launch {
+                room.renderedVotes.collect { send(it.first, event = "options") }
+            }
+            room.awaitClose()
+            sendRoomClosed()
+        } finally {
+            clicky.liveConnections.release(session.id)
         }
-        launch {
-            room.renderedVotes.collect { send(it.first, event = "options") }
-        }
-        room.awaitClose()
-        sendRoomClosed()
     }
 }
