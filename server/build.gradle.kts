@@ -25,7 +25,6 @@ kotlin {
     jvmToolchain(25)
     compilerOptions {
         optIn.addAll("kotlin.uuid.ExperimentalUuidApi", "io.ktor.utils.io.ExperimentalKtorApi")
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
@@ -36,9 +35,9 @@ dependencies {
     implementation(libs.sqids)
     implementation(libs.shocky.icons)
     implementation(libs.qrcode)
-    implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
+    implementation(libs.caffeine)
     implementation(compose.runtime)
-    implementation("app.cash.molecule:molecule-runtime:2.2.0")
+    implementation(libs.molecule.runtime)
 
 
     // Ktor
@@ -58,7 +57,7 @@ dependencies {
     implementation(libs.ktor.htmx.html)
     implementation(libs.ktor.server.netty)
     implementation(libs.kotlinx.collections.immutable)
-    implementation("io.ktor:ktor-server-caching-headers:3.3.2")
+    implementation(libs.ktor.server.caching.headers)
 
     // Tests
     testImplementation(libs.ktor.server.test.host)

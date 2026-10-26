@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    alias(libs.plugins.kotlin.jvm)
     `java-gradle-plugin`
     `maven-publish`
 }
@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0")
+    compileOnly(libs.kotlin.gradle.plugin)
     implementation(gradleApi())
 }
 

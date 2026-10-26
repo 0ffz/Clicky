@@ -1,43 +1,48 @@
 [versions]
-kotlin = "2.3.0"
+compose = "1.12.2"
+guava = "33.7.2-jre"
+kotlin = "2.4.21"
 kotlinx-browser = "0.5.0"
 kotlinx-html = "0.12.0"
-ktor = "3.3.2"
-logback = "1.5.13"
-guava = "33.5.0-jre"
-compose = "1.9.3"
+ktor = "3.6.0"
+logback = "1.6.6"
 
 [libraries]
+caffeine = "com.github.ben-manes.caffeine:caffeine:3.3.1"
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+kotlinx-collections-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2"
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+ktor-htmx-html = { module = "io.ktor:ktor-htmx-html", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
+ktor-server-caching-headers = { module = "io.ktor:ktor-server-caching-headers", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
-ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
-ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
-ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
-ktor-server-rate-limit = { module = "io.ktor:ktor-server-rate-limit", version.ref = "ktor" }
-ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
-ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
-ktor-server-sse = { module = "io.ktor:ktor-server-sse", version.ref = "ktor" }
 ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktor" }
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
 ktor-server-htmx = { module = "io.ktor:ktor-server-htmx", version.ref = "ktor" }
-ktor-htmx-html = { module = "io.ktor:ktor-htmx-html", version.ref = "ktor" }
-kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-rate-limit = { module = "io.ktor:ktor-server-rate-limit", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
+ktor-server-sse = { module = "io.ktor:ktor-server-sse", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-sqids = "org.sqids:sqids-kotlin:0.1.1"
-shocky-icons = "me.dvyy:shocky-icons:0.3.0-dev.6"
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+molecule-runtime = "app.cash.molecule:molecule-runtime:2.2.0"
 qrcode = "io.github.g0dkar:qrcode-kotlin:4.5.0"
-kotlinx-collections-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0"
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
+shocky-icons = "me.dvyy:shocky-icons:0.3.0-dev.6"
+sqids = "org.sqids:sqids-kotlin:0.1.1"
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose-compiler = {id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrainsCompose = {id = "org.jetbrains.compose", version.ref = "compose" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+version-catalog-update = "nl.littlerobots.version-catalog-update:1.1.2"
