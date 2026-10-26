@@ -10,14 +10,26 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.server.util.*
+import io.ktor.sse.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.html.html
 import kotlinx.html.stream.appendHTML
 import me.dvyy.clicky.server.data.*
 import me.dvyy.clicky.server.data.exceptions.RoomNotFoundException
+import me.dvyy.clicky.helpers.partialHtml
+import me.dvyy.clicky.ui.pages.errorBanner
 import me.dvyy.clicky.ui.pages.homePage
 import me.dvyy.clicky.ui.pages.resultsPage
+import kotlin.time.Duration.Companion.seconds
+
+private val SSE_HEARTBEAT_INTERVAL = 15.seconds
 
 @OptIn(FlowPreview::class)
 context(clicky: Clicky)
@@ -90,22 +102,45 @@ fun Route.roomCodeRoutes() = route("/{room}") {
 
         val room = call.getRoomOrNull() ?: return@sse sendRoomClosed()
         val session = call.principal<UserSession>() ?: return@sse close()
-        if (!clicky.liveConnections.tryAcquire(session.id)) return@sse close()
+        val evicted = clicky.liveConnections.acquire(session.id)
         try {
             val isOwner = room.admin == session.id
 
-            if (isOwner) launch {
-                room.renderedChart.collect {
-                    send(it, event = "chart")
+            coroutineScope {
+                // Disconnects are only noticed on write, heartbeat frees up connection slots for idle rooms
+                launch {
+                    while (true) {
+                        delay(SSE_HEARTBEAT_INTERVAL)
+                        send(ServerSentEvent(comments = "heartbeat"))
+                    }
                 }
+                if (isOwner) launch {
+                    room.renderedChart.collect {
+                        send(it, event = "chart")
+                    }
+                }
+                launch {
+                    room.renderedVotes.collect { send(it.first, event = "options") }
+                }
+                val roomClosed = async { room.awaitClose() }
+                val wasEvicted = select {
+                    roomClosed.onAwait { false }
+                    evicted.onAwait { true }
+                }
+                coroutineContext.cancelChildren()
+                if (wasEvicted) {
+                    // Client stops reconnecting on this event via sse-close
+                    send(
+                        partialHtml { errorBanner("Live updates paused, this room is open in too many tabs. Reload to resume.") },
+                        event = "evicted"
+                    )
+                    close()
+                } else sendRoomClosed()
             }
-            launch {
-                room.renderedVotes.collect { send(it.first, event = "options") }
-            }
-            room.awaitClose()
-            sendRoomClosed()
+        } catch (_: ClosedWriteChannelException) {
+            // Client disconnected
         } finally {
-            clicky.liveConnections.release(session.id)
+            clicky.liveConnections.release(session.id, evicted)
         }
     }
 }

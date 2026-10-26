@@ -9,7 +9,7 @@ class Clicky(app: Application) {
     val logger = app.log
     val config = ClickyConfig(app.environment.config)
     val rooms: RoomRepository = RoomRepository(logger, config)
-    val liveConnections = ConnectionCounter(Limits.MAX_CONNECTIONS_PER_SESSION)
+    val liveConnections = ConnectionLimiter(Limits.MAX_CONNECTIONS_PER_SESSION)
 }
 
 class ClickyConfig(conf: ApplicationConfig) {

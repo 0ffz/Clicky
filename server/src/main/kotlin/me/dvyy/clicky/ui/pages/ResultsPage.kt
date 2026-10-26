@@ -37,6 +37,12 @@ fun HTML.resultsPage(
 
     div {
         attributes["sse-connect"] = "/room/$code/live"
+        attributes["sse-close"] = "evicted"
+        centeredContent {
+            div {
+                attributes["sse-swap"] = "evicted"
+            }
+        }
         div {
             attributes["sse-swap"] = "room-not-found"
             attributes.hx {
